@@ -7,7 +7,7 @@ const nunito = Nunito({
 });
 
 interface NavLinkProps extends LinkProps {
-  isActive?: Boolean;
+  isActive?: boolean;
   children: ReactNode;
 }
 
@@ -24,20 +24,20 @@ function NavLink({ children, isActive = false, ...props }: NavLinkProps) {
   );
 }
 
-export default function () {
+export default function Header() {
   return (
-    <div className="px-20 py-5">
-      <div
-        className={`${nunito.className} flex ml-auto justify-between max-w-sm text-lg`}
+    <header className="px-4 py-4 md:px-20 md:py-5">
+      <nav
+        className={`${nunito.className} flex mx-auto md:mr-0 justify-between max-w-sm text-lg`}
       >
-        <NavLink isActive={true} href="">
+        <NavLink isActive href="">
           Home
         </NavLink>
         <NavLink href="#about">About</NavLink>
         <NavLink href="#projets">Projets</NavLink>
         <NavLink href="#blog">Blog</NavLink>
         <NavLink href="#contact">Contact</NavLink>
-      </div>
-    </div>
+      </nav>
+    </header>
   );
 }

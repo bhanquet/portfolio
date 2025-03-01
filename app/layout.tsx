@@ -19,7 +19,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${lexend.className} antialiased`}>{children}</body>
+      <body className={`${lexend.className} text-maintext antialiased`}>
+        {children}
+      </body>
     </html>
   );
 }
