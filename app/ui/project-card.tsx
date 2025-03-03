@@ -13,7 +13,9 @@ export default function ProjectCard({
   description?: string;
 }) {
   return (
-    <div className={`rounded-lg border shadow-lg overflow-hidden ${className}`}>
+    <div
+      className={`rounded-lg border shadow-lg overflow-hidden ${className || ""}`}
+    >
       {imageSrc && (
         <div className="relative aspect-[4/3]">
           <Image fill src={imageSrc} alt={imageAlt} className="object-cover" />

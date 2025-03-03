@@ -9,6 +9,8 @@ import ButtonPrimary from "./ui/button-primary";
 import ButtonSecondary from "./ui/button-secondary";
 import Card from "./ui/card";
 import ProjectCard from "./ui/project-card";
+import Input from "./ui/form/input";
+import Textarea from "./ui/form/textarea";
 
 export default function Home() {
   return (
@@ -95,6 +97,18 @@ export default function Home() {
           imageSrc={projetPortfolioImage}
           imageAlt="Projet portfolio"
         />
+      </div>
+      {/* Contact */}
+      <div className="bg-background2 p-14">
+        <div className="bg-white w-1/2 mx-auto rounded-md shadow-lg p-10">
+          <h3 className="text-4xl mb-6">Contact</h3>
+          <form className="grid grid-cols-2 gap-4">
+            <Input type="text" placeholder="Firstname" />
+            <Input type="text" placeholder="Lastname" />
+            <Input className="col-span-2" type="email" placeholder="Email" />
+            <Textarea className="col-span-2" placeholder="Message" />
+          </form>
+        </div>
       </div>
     </>
   );
