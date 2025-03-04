@@ -1,5 +1,5 @@
 import Image from "next/image";
-import ButtonPrimary from "./button-primary";
+import Button from "./button";
 import Card from "./card";
 import Github from "./icons/github";
 
@@ -30,7 +30,7 @@ export default async function GithubCard({ username }: { username: string }) {
         </p>
         <p className="text-xl">{user?.name || username}</p>
         <p className="mb-4 text-sm text-secondarytext">{username}</p>
-        <ButtonPrimary>Github</ButtonPrimary>
+        <Button href={user?.html_url || "#"}>Github</Button>
       </div>
       <div>
         {user && (

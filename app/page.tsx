@@ -3,8 +3,7 @@ import brianHeroImage from "@/images/brian_hero.png";
 import projectPortfolioImage from "@/images/projects/portfolio.png";
 
 import Header from "@/app/ui/header";
-import ButtonPrimary from "./ui/button-primary";
-import ButtonSecondary from "./ui/button-secondary";
+import Button from "./ui/button";
 import Card from "./ui/card";
 import ProjectCard from "./ui/project-card";
 import Input from "./ui/form/input";
@@ -30,8 +29,10 @@ export default function Home() {
               use.
             </h2>
             <div className="mt-20 flex justify-around">
-              <ButtonPrimary>Contact me</ButtonPrimary>
-              <ButtonSecondary>See my work</ButtonSecondary>
+              <Button href="#contact">Contact me</Button>
+              <Button href="#projects" variant="secondary">
+                See my work
+              </Button>
             </div>
           </div>
           <div className="hidden lg:block self-end flex-shrink-0">
@@ -71,7 +72,7 @@ export default function Home() {
           <Card className="w-96 h-44 flex flex-col justify-between">
             <p className="mb-auto text-lg">My Curriculum Vitae</p>
             <div>
-              <ButtonPrimary>Download my CV</ButtonPrimary>
+              <Button>Download my CV</Button>
             </div>
           </Card>
         </div>
