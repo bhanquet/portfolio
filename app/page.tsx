@@ -1,7 +1,5 @@
 import Image from "next/image";
 import brianHeroImage from "@/images/brian_hero.png";
-import githubAvatarImage from "@/images/github_avatar.png";
-import Github from "./ui/icons/github";
 import projectPortfolioImage from "@/images/projects/portfolio.png";
 
 import Header from "@/app/ui/header";
@@ -11,6 +9,9 @@ import Card from "./ui/card";
 import ProjectCard from "./ui/project-card";
 import Input from "./ui/form/input";
 import Textarea from "./ui/form/textarea";
+import GithubCard from "./ui/githubCard";
+import { GithubCardSkeleton } from "./ui/skeletons";
+import { Suspense } from "react";
 
 export default function Home() {
   return (
@@ -64,23 +65,9 @@ export default function Home() {
         </div>
         {/* Social */}
         <div className="mt-24 flex justify-center">
-          <Card className="w-96 h-44 mr-10 flex justify-between items-center">
-            <div>
-              <p className="mb-3">
-                <Github size={24} />
-              </p>
-              <p className="text-xl">Brian Hanquet</p>
-              <p className="mb-4 text-sm text-secondarytext">bhanquet</p>
-              <ButtonPrimary>Github</ButtonPrimary>
-            </div>
-            <div>
-              <Image
-                src={githubAvatarImage}
-                alt="bhanquet githubAvatar"
-                className="rounded-full"
-              />
-            </div>
-          </Card>
+          <Suspense fallback={<GithubCardSkeleton />}>
+            <GithubCard username="bhanquet" />
+          </Suspense>
           <Card className="w-96 h-44 flex flex-col justify-between">
             <p className="mb-auto text-lg">My Curriculum Vitae</p>
             <div>
