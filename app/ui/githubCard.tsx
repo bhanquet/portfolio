@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Button from "./button";
 import Card from "./card";
-import Github from "./icons/github";
+import GithubIcon from "./icons/github-icon";
 
 interface githubApi {
   login: string;
@@ -26,7 +26,7 @@ export default async function GithubCard({ username }: { username: string }) {
     <Card className="w-96 h-44 mr-10 flex justify-between items-center">
       <div>
         <p className="mb-3">
-          <Github size={24} />
+          <GithubIcon size={24} />
         </p>
         <p className="text-xl">{user?.name || username}</p>
         <p className="mb-4 text-sm text-secondarytext">{username}</p>
