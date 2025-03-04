@@ -1,8 +1,8 @@
 import Image from "next/image";
 import brianHeroImage from "@/images/brian_hero.png";
 import githubAvatarImage from "@/images/github_avatar.png";
-import projetPortfolioImage from "@/images/projets/portfolio.png";
 import Github from "./ui/icons/github";
+import projectPortfolioImage from "@/images/projects/portfolio.png";
 
 import Header from "@/app/ui/header";
 import ButtonPrimary from "./ui/button-primary";
@@ -90,16 +90,19 @@ export default function Home() {
         </div>
       </div>
       {/* Projects */}
-      <div className="bg-background p-24 flex flex-col items-center">
+      <div
+        id="projects"
+        className="bg-background p-24 flex flex-col items-center"
+      >
         <h3 className="mb-10 text-4xl">Projects</h3>
         <ProjectCard
           className="w-96 "
-          imageSrc={projetPortfolioImage}
-          imageAlt="Projet portfolio"
+          imageSrc={projectPortfolioImage}
+          imageAlt="Project portfolio"
         />
       </div>
       {/* Contact */}
-      <div className="bg-background2 p-14">
+      <div id="contact" className="bg-background2 p-14">
         <div className="bg-white w-1/2 mx-auto rounded-md shadow-lg p-10">
           <h3 className="text-4xl mb-6">Contact</h3>
           <form className="grid grid-cols-2 gap-4">

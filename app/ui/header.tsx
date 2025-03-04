@@ -34,7 +34,7 @@ export default function Header() {
           Home
         </NavLink>
         <NavLink href="#about">About</NavLink>
-        <NavLink href="#projets">Projets</NavLink>
+        <NavLink href="#projects">Projets</NavLink>
         <NavLink href="#blog">Blog</NavLink>
         <NavLink href="#contact">Contact</NavLink>
       </nav>
