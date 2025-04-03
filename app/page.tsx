@@ -93,11 +93,25 @@ export default function Home() {
       <div id="contact" className="bg-background2 p-14">
         <div className="bg-white w-1/2 mx-auto rounded-md shadow-lg p-10">
           <h3 className="text-4xl mb-6">Contact</h3>
-          <form className="grid grid-cols-2 gap-4">
-            <Input type="text" placeholder="Firstname" />
-            <Input type="text" placeholder="Lastname" />
-            <Input className="col-span-2" type="email" placeholder="Email" />
-            <Textarea className="col-span-2" placeholder="Message" />
+          <p>
+            You can contact me at{" "}
+            <a
+              className="text-strongcolor"
+              href={`mailto:${process.env.MAIL_CONTACT}`}
+            >
+              {process.env.MAIL_CONTACT}
+            </a>
+          </p>
+          <form>
+            <div className="grid grid-cols-2 gap-4">
+              <Input type="text" placeholder="Firstname" />
+              <Input type="text" placeholder="Lastname" />
+              <Input className="col-span-2" type="email" placeholder="Email" />
+              <Textarea className="col-span-2" placeholder="Message" />
+            </div>
+            <div className="mt-4">
+              <Button>Send</Button>
+            </div>
           </form>
         </div>
       </div>
