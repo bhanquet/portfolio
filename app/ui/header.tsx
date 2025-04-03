@@ -1,6 +1,9 @@
+"use client";
+
 import { Nunito } from "next/font/google";
 import Link, { LinkProps } from "next/link";
 import { ReactNode } from "react";
+import { usePathname } from "next/navigation";
 
 const nunito = Nunito({
   subsets: ["latin"],
@@ -25,18 +28,28 @@ function NavLink({ children, isActive = false, ...props }: NavLinkProps) {
 }
 
 export default function Header() {
+  const pathname = usePathname();
+  const links = [
+    { label: "Home", href: "/" },
+    { label: "Projects", href: "/#projects" },
+    { label: "Blog", href: "/blog" },
+    { label: "Contact", href: "/#contact" },
+  ];
+
   return (
     <header className="px-4 py-4 md:px-20 md:py-5">
       <nav
         className={`${nunito.className} flex mx-auto md:mr-0 justify-between max-w-sm text-lg`}
       >
-        <NavLink isActive href="">
-          Home
-        </NavLink>
-        <NavLink href="#about">About</NavLink>
-        <NavLink href="#projects">Projets</NavLink>
-        <NavLink href="#blog">Blog</NavLink>
-        <NavLink href="#contact">Contact</NavLink>
+        {links.map((link, key) => (
+          <NavLink
+            key={`navlink-${key}`}
+            href={link.href}
+            isActive={pathname === link.href}
+          >
+            {link.label}
+          </NavLink>
+        ))}
       </nav>
     </header>
   );
