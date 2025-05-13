@@ -3,7 +3,7 @@ import Input from "@/ui/form/input";
 import Card from "@/ui/card";
 import Button from "@/ui/button";
 import { getSession } from "@/lib/session";
-import { signout } from "../../actions/auth";
+import { signout } from "@/actions/auth";
 
 export default async function Page() {
   const tags = ["IT", "Finances", "Cars"];
@@ -22,7 +22,11 @@ export default async function Page() {
                 </Button>
               </div>
               <div className="mb-3">
-                <Button variant="secondary" className="w-1/2">
+                <Button
+                  href="/blog/create"
+                  variant="secondary"
+                  className="block w-1/2"
+                >
                   Create new post
                 </Button>
               </div>
