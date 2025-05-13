@@ -1,9 +1,9 @@
 "use server";
 
-import { FormState } from "@/app/lib/definitions";
+import { FormState } from "@/lib/definitions";
 import bcrypt from "bcrypt";
 import { redirect } from "next/navigation";
-import { createSession, deleteSession } from "@/app/lib/session";
+import { createSession, deleteSession } from "@/lib/session";
 
 export async function signin(_: FormState, formData: FormData) {
   const email = formData.get("email");

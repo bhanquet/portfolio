@@ -2,14 +2,14 @@ import Image from "next/image";
 import brianHeroImage from "@/images/brian_hero.png";
 import projectPortfolioImage from "@/images/projects/portfolio.png";
 
-import Header from "@/app/ui/header";
-import Button from "./ui/button";
-import Card from "./ui/card";
-import ProjectCard from "./ui/project-card";
-import Input from "./ui/form/input";
-import Textarea from "./ui/form/textarea";
-import GithubCard from "./ui/githubCard";
-import { GithubCardSkeleton } from "./ui/skeletons";
+import Header from "@/ui/header";
+import Button from "@/ui/button";
+import Card from "@/ui/card";
+import ProjectCard from "@/ui/project-card";
+import Input from "@/ui/form/input";
+import Textarea from "@/ui/form/textarea";
+import GithubCard from "@/ui/githubCard";
+import { GithubCardSkeleton } from "@/ui/skeletons";
 import { Suspense } from "react";
 
 export default function Home() {
