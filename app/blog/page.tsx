@@ -1,15 +1,26 @@
 import Header from "@/app/ui/header";
 import Input from "@/app/ui/form/input";
 import Card from "../ui/card";
+import Button from "@/app/ui/button";
+import { getSession } from "@/app/lib/session";
+import { signout } from "../actions/auth";
 
-export default function Page() {
+export default async function Page() {
   const tags = ["IT", "Finances", "Cars"];
+  const session = await getSession();
   return (
     <>
       <Header />
 
       <div className="mx-auto flex">
         <aside className="w-1/4 px-6 ">
+          {session && (
+            <div className="mb-3">
+              <Button onClick={signout} className="w-1/2">
+                Log out
+              </Button>
+            </div>
+          )}
           <p className="mb-3 text-gray-700 text-lg font-semibold">Tags</p>
           <ul>
             {tags.map((tag, key) => (
