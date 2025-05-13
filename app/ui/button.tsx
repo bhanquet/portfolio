@@ -6,19 +6,23 @@ export default function Button({
   children,
   href,
   variant = "primary",
+  className = "",
   onClick,
 }: {
   children: ReactNode;
   href?: string;
   variant?: "primary" | "secondary";
-  onClick?: () => void;
+  className?: string;
+  onClick?: (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => void | Promise<void>;
 }) {
   const baseStyle = "rounded-md py-2 px-4 shadow-md";
   const variantStyle =
     variant === "primary"
       ? "bg-[#061e36] hover:bg-[#041729] text-white "
       : "bg-[#dedede] hover:bg-[#C9C9C9]";
-  const className = `${baseStyle} ${variantStyle}`;
+  const combinedClassName = `${baseStyle} ${variantStyle} ${className}`.trim();
 
   if (href) {
     const isExternal =
@@ -28,7 +32,7 @@ export default function Button({
       <>
         <a
           href={href}
-          className={className}
+          className={combinedClassName}
           target="_blank"
           rel="noopener noreferrer"
           style={{ display: "flex", alignItems: "center" }}
@@ -40,14 +44,14 @@ export default function Button({
         </a>
       </>
     ) : (
-      <Link className={className} href={href}>
+      <Link className={combinedClassName} href={href}>
         {children}
       </Link>
     );
   }
 
   return (
-    <button className={className} onClick={onClick}>
+    <button className={combinedClassName} onClick={onClick}>
       {children}
     </button>
   );
