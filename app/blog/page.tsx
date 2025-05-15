@@ -1,7 +1,7 @@
-import Header from "@/ui/header";
-import Input from "@/ui/form/input";
-import Card from "@/ui/card";
-import Button from "@/ui/button";
+import Header from "@/components/shared/header";
+import Input from "@/components/ui/form/input";
+import Card from "@/components/ui/card";
+import Button from "@/components/ui/button";
 import { getSession } from "@/lib/session";
 import { signout } from "@/actions/auth";
 

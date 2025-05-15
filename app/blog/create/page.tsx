@@ -1,8 +1,8 @@
 import { getSession } from "@/lib/session";
 import { notFound } from "next/navigation";
-import Button from "@/ui/button";
-import Input from "@/ui/form/input";
-import Textarea from "@/ui/form/textarea";
+import Button from "@/components/ui/button";
+import Input from "@/components/ui/form/input";
+import Textarea from "@/components/ui/form/textarea";
 
 export default async function Page() {
   const session = await getSession();
