@@ -2,7 +2,6 @@ import { getSession } from "@/lib/session";
 import { notFound } from "next/navigation";
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/form/input";
-import Textarea from "@/components/ui/form/textarea";
 import Editor from "@/components/ui/editor";
 
 export default async function Page() {
@@ -31,13 +30,6 @@ export default async function Page() {
           <label htmlFor="content" className="block font-medium mb-1">
             Content
           </label>
-          <Textarea
-            id="content"
-            name="content"
-            rows={6}
-            className="w-full border rounded px-3 py-2"
-            required
-          />
           <Editor />
         </div>
         <Button>Publish</Button>
