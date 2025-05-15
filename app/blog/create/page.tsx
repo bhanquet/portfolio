@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/form/input";
 import Textarea from "@/components/ui/form/textarea";
+import Editor from "@/components/ui/editor";
 
 export default async function Page() {
   const session = await getSession();
@@ -37,6 +38,7 @@ export default async function Page() {
             className="w-full border rounded px-3 py-2"
             required
           />
+          <Editor />
         </div>
         <Button>Publish</Button>
       </form>
