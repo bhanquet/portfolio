@@ -1,21 +1,106 @@
 "use client";
 
-import { useEditor, EditorContent, BubbleMenu } from "@tiptap/react";
+import { useEditor, EditorContent, BubbleMenu, Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
+import Link from "@tiptap/extension-link";
+import Image from "@tiptap/extension-image";
 import { ReactNode } from "react";
 
-export default function Editor() {
+import { Heading1 } from "lucide-react";
+import { Heading2 } from "lucide-react";
+import { Heading3 } from "lucide-react";
+import { Bold } from "lucide-react";
+import { Italic } from "lucide-react";
+import { Strikethrough } from "lucide-react";
+import { Code } from "lucide-react";
+
+export default function TipTapEditor() {
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        heading: {
+          levels: [1, 2, 3],
+        },
+      }),
       Placeholder.configure({ placeholder: "Write here..." }),
+      Image,
+      Link.configure({
+        openOnClick: true,
+        autolink: true,
+        defaultProtocol: "https",
+        protocols: ["http", "https"],
+        isAllowedUri: (url, ctx) => {
+          try {
+            // construct URL
+            const parsedUrl = url.includes(":")
+              ? new URL(url)
+              : new URL(`${ctx.defaultProtocol}://${url}`);
+
+            // use default validation
+            if (!ctx.defaultValidate(parsedUrl.href)) {
+              return false;
+            }
+
+            // disallowed protocols
+            const disallowedProtocols = ["ftp", "file", "mailto"];
+            const protocol = parsedUrl.protocol.replace(":", "");
+
+            if (disallowedProtocols.includes(protocol)) {
+              return false;
+            }
+
+            // only allow protocols specified in ctx.protocols
+            const allowedProtocols = ctx.protocols.map((p) =>
+              typeof p === "string" ? p : p.scheme,
+            );
+
+            if (!allowedProtocols.includes(protocol)) {
+              return false;
+            }
+
+            // disallowed domains
+            const disallowedDomains = [
+              "example-phishing.com",
+              "malicious-site.net",
+            ];
+            const domain = parsedUrl.hostname;
+
+            if (disallowedDomains.includes(domain)) {
+              return false;
+            }
+
+            // all checks have passed
+            return true;
+          } catch {
+            return false;
+          }
+        },
+        shouldAutoLink: (url) => {
+          try {
+            // construct URL
+            const parsedUrl = url.includes(":")
+              ? new URL(url)
+              : new URL(`https://${url}`);
+
+            // only auto-link if the domain is not in the disallowed list
+            const disallowedDomains = [
+              "example-no-autolink.com",
+              "another-no-autolink.com",
+            ];
+            const domain = parsedUrl.hostname;
+
+            return !disallowedDomains.includes(domain);
+          } catch {
+            return false;
+          }
+        },
+      }),
     ],
     immediatelyRender: false,
     editorProps: {
       attributes: {
-        class:
-          "prose prose-sm sm:prose-base lg:prose-lg m-5 focus:outline-none",
+        class: "prose focus:outline-none",
       },
     },
   });
@@ -23,51 +108,109 @@ export default function Editor() {
   return (
     <>
       {editor && (
-        <BubbleMenu editor={editor}>
-          <div className="px-1 bg-white text-sm rounded-xl border shadow-lg">
-            <BubbleButton
-              onClick={() => editor.chain().focus().toggleBold().run()}
-              active={editor.isActive("bold")}
-            >
-              Bold
+        <BubbleMenu
+          editor={editor}
+          tippyOptions={{ placement: "bottom-start" }}
+        >
+          <div className="flex items-center p-1 bg-white text-sm rounded-lg border border-purple-300 shadow-lg">
+            <BubbleButton style="heading1" editor={editor}>
+              <Heading1 size={16} />
             </BubbleButton>
-            <BubbleButton
-              onClick={() => editor.chain().focus().toggleItalic().run()}
-              active={editor.isActive("italic")}
-            >
-              Italic
+            <BubbleButton style="heading2" editor={editor}>
+              <Heading2 size={16} />
             </BubbleButton>
-            <BubbleButton
-              onClick={() => editor.chain().focus().toggleStrike().run()}
-              active={editor.isActive("strike")}
-            >
-              Stike
+            <BubbleButton style="heading3" editor={editor}>
+              <Heading3 size={16} />
+            </BubbleButton>
+            <Separator />
+            <BubbleButton style="bold" editor={editor}>
+              <Bold size={16} />
+            </BubbleButton>
+            <BubbleButton style="italic" editor={editor}>
+              <Italic size={16} />
+            </BubbleButton>
+            <BubbleButton style="strike" editor={editor}>
+              <Strikethrough size={16} />
+            </BubbleButton>
+            <BubbleButton style="code" editor={editor}>
+              <Code size={16} />
             </BubbleButton>
           </div>
         </BubbleMenu>
       )}
-      <div>
+      <div className="tiptap">
         <EditorContent editor={editor} />
       </div>
     </>
   );
 }
 
+type Style =
+  | "bold"
+  | "italic"
+  | "strike"
+  | "code"
+  | "heading1"
+  | "heading2"
+  | "heading3";
+
 function BubbleButton({
   children,
-  active,
-  onClick,
+  style,
+  editor,
 }: {
   children: ReactNode;
-  active?: boolean;
-  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  style: Style;
+  editor: Editor;
 }) {
   return (
     <button
-      className={`px-2 py-1 m-1 rounded-xl outline-1 outline-slate-200 hover:outline ${active ? "bg-strongcolor text-white" : ""}`}
-      onClick={onClick}
+      className={`px-1 py-1 m-[3px] rounded outline-1 outline-slate-200 hover:outline ${isStyleActive(editor, style) ? "text-strongcolor " : ""}`}
+      onClick={() => {
+        toggleStyle(style, editor);
+      }}
     >
       {children}
     </button>
   );
+}
+
+type Level = 1 | 2 | 3;
+
+function isStyleActive(editor: Editor, style: Style): boolean {
+  const simpleStyles = ["bold", "italic", "strike", "code"] as const;
+
+  if (simpleStyles.includes(style as any)) {
+    return editor.isActive(style);
+  }
+
+  if (style.startsWith("heading")) {
+    const level = parseInt(style.slice(-1)) as Level;
+    return editor.isActive("heading", { level });
+  }
+
+  return false;
+}
+
+function toggleStyle(style: Style, editor: Editor) {
+  const toggleCommands: Record<string, () => void> = {
+    bold: () => editor.chain().focus().toggleBold().run(),
+    italic: () => editor.chain().focus().toggleItalic().run(),
+    strike: () => editor.chain().focus().toggleStrike().run(),
+    code: () => editor.chain().focus().toggleCode().run(),
+  };
+
+  if (style in toggleCommands) {
+    toggleCommands[style]();
+    return;
+  }
+
+  if (style.startsWith("heading")) {
+    const level = parseInt(style.slice(-1)) as Level;
+    editor.chain().focus().toggleHeading({ level }).run();
+  }
+}
+
+function Separator() {
+  return <div className="w-px h-6 bg-gray-300 mx-2"></div>;
 }

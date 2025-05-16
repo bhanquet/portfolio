@@ -2,7 +2,7 @@ import { getSession } from "@/lib/session";
 import { notFound } from "next/navigation";
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/form/input";
-import Editor from "@/components/ui/editor";
+import TipTapEditor from "@/components/ui/editor";
 
 export default async function Page() {
   const session = await getSession();
@@ -12,7 +12,7 @@ export default async function Page() {
 
   return (
     <div className="mx-auto max-w-3xl">
-      <h1 className="text-2xl font-bold mb-4">Create a New Blog Post</h1>
+      <h1 className="text-4xl font-bold mb-4">Create a New Blog Post</h1>
       <form className="space-y-4">
         <div>
           <label htmlFor="title" className="block font-medium mb-1">
@@ -25,7 +25,7 @@ export default async function Page() {
             Content
           </label>
           <div className="border rounded-lg p-2">
-            <Editor />
+            <TipTapEditor />
           </div>
         </div>
         <Button>Publish</Button>
