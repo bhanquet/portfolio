@@ -11,26 +11,22 @@ export default async function Page() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto mt-10">
+    <div className="mx-auto max-w-3xl">
       <h1 className="text-2xl font-bold mb-4">Create a New Blog Post</h1>
       <form className="space-y-4">
         <div>
           <label htmlFor="title" className="block font-medium mb-1">
             Title
           </label>
-          <Input
-            type="text"
-            id="title"
-            name="title"
-            className="w-full border rounded px-3 py-2"
-            required
-          />
+          <Input type="text" id="title" name="title" className="" required />
         </div>
         <div>
           <label htmlFor="content" className="block font-medium mb-1">
             Content
           </label>
-          <Editor />
+          <div className="border rounded-lg p-2">
+            <Editor />
+          </div>
         </div>
         <Button>Publish</Button>
       </form>

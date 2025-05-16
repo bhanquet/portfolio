@@ -5,8 +5,9 @@ export default function Input({
   return (
     <input
       {...props}
-      className={`px-2 py-3 w-full bg-gray-100 rounded
+      className={`px-3 py-2 w-full rounded-lg
                   border-2 outline-none
+                  shadow-sm
                   focus:border-b-2 focus:border-b-blue-200
                   ${className}
                 `}

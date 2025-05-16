@@ -1,17 +1,16 @@
 "use client";
 
-import {
-  useEditor,
-  EditorContent,
-  isMarkActive,
-  BubbleMenu,
-} from "@tiptap/react";
+import { useEditor, EditorContent, BubbleMenu } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import Placeholder from "@tiptap/extension-placeholder";
 import { ReactNode } from "react";
 
-export default function Editor(): ReactNode {
+export default function Editor() {
   const editor = useEditor({
-    extensions: [StarterKit],
+    extensions: [
+      StarterKit,
+      Placeholder.configure({ placeholder: "Write here..." }),
+    ],
     immediatelyRender: false,
     editorProps: {
       attributes: {
@@ -28,7 +27,7 @@ export default function Editor(): ReactNode {
           <div className="px-1 bg-white text-sm rounded-xl border shadow-lg">
             <BubbleButton
               onClick={() => editor.chain().focus().toggleBold().run()}
-              active={isMarkActive(editor.view.state, "bold")}
+              active={editor.isActive("bold")}
             >
               Bold
             </BubbleButton>
@@ -47,7 +46,7 @@ export default function Editor(): ReactNode {
           </div>
         </BubbleMenu>
       )}
-      <div className="rounded border shadow">
+      <div>
         <EditorContent editor={editor} />
       </div>
     </>

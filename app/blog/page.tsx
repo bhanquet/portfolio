@@ -10,8 +10,6 @@ export default async function Page() {
   const session = await getSession();
   return (
     <>
-      <Header />
-
       <div className="mx-auto flex">
         <aside className="w-1/4 px-6 ">
           {session && (
@@ -48,7 +46,7 @@ export default async function Page() {
           <h2 className="mb-4 text-center text-strongcolor text-2xl">
             Sharing thought and ideas
           </h2>
-          <Input placeholder="Search" />
+          <Input placeholder="Search..." />
           <Card className="mt-5">Test</Card>
         </div>
       </div>
