@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/form/input";
 import TipTapEditor from "@/components/ui/editor";
+import { create } from "@/actions/blog/create";
 
 export default async function Page() {
   const session = await getSession();
@@ -13,7 +14,7 @@ export default async function Page() {
   return (
     <div className="mx-auto max-w-3xl">
       <h1 className="text-4xl font-bold mb-4">Create a New Blog Post</h1>
-      <form className="space-y-4">
+      <form action={create} className="space-y-4">
         <div>
           <label htmlFor="title" className="block font-medium mb-1">
             Title
@@ -25,7 +26,7 @@ export default async function Page() {
             Content
           </label>
           <div className="border rounded-lg p-2">
-            <TipTapEditor />
+            <TipTapEditor inputName="content" />
           </div>
         </div>
         <Button>Publish</Button>
