@@ -15,8 +15,20 @@ import { Italic } from "lucide-react";
 import { Strikethrough } from "lucide-react";
 import { Code } from "lucide-react";
 
-export default function TipTapEditor() {
+export default function TipTapEditor({
+  editorContent,
+  onEditorChange,
+  inputName,
+}: {
+  editorContent?: string;
+  onEditorChange?: (content: string) => void;
+  inputName?: string;
+}) {
   const editor = useEditor({
+    content: editorContent,
+    onUpdate: ({ editor }) => {
+      if (onEditorChange) onEditorChange(editor.getHTML());
+    },
     extensions: [
       StarterKit.configure({
         heading: {
@@ -140,6 +152,9 @@ export default function TipTapEditor() {
       )}
       <div className="tiptap">
         <EditorContent editor={editor} />
+        {inputName && editor && (
+          <input type="hidden" name={inputName} value={editor.getHTML()} />
+        )}
       </div>
     </>
   );
