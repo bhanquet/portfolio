@@ -9,3 +9,11 @@ export type SessionData = {
   userName: string;
   userRole: string;
 };
+
+export type Blog = {
+  title: string;
+  url: string;
+  tags: string[];
+  summary: string;
+  content: string;
+};
