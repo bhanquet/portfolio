@@ -3,10 +3,14 @@ import Card from "@/components/ui/card";
 import Button from "@/components/ui/button";
 import { getSession } from "@/lib/session";
 import { signout } from "@/actions/auth";
+import { fetchAllTags, fetchBlogs } from "@/lib/data";
+import { Blog } from "@/lib/definitions";
 
 export default async function Page() {
-  const tags = ["IT", "Finances", "Cars"];
   const session = await getSession();
+  const tags = await fetchAllTags();
+  const blogs: Blog[] = (await fetchBlogs()) || [];
+
   return (
     <>
       <div className="mx-auto flex">
@@ -42,11 +46,26 @@ export default async function Page() {
           </ul>
         </aside>
         <div className="w-full max-w-5xl">
-          <h2 className="mb-4 text-center text-strongcolor text-2xl">
+          <h1 className="mb-4 text-center text-strongcolor text-2xl">
             Sharing thought and ideas
-          </h2>
+          </h1>
           <Input placeholder="Search..." />
-          <Card className="mt-5">Test</Card>
+          {/* TODO: Add suspense */}
+          {blogs.map((blog) => (
+            <Card key={blog.title} className="mt-5">
+              <p className="mb-2">
+                <span className="p-1 px-2 rounded-full bg-blue-200">
+                  {blog.tags?.join(",")}
+                </span>
+              </p>
+              <h2 className="text-2xl mb-3">{blog.title}</h2>
+              <p className="text-gray-700">{blog.summary}</p>
+
+              <div className="mt-3">
+                <Button href={blog.url}>Read More...</Button>
+              </div>
+            </Card>
+          ))}
         </div>
       </div>
     </>
