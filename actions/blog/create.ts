@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import { getDB } from "@/lib/mongodb";
+import { slugify } from "@/lib/utils";
 
 const tagsSchema = z
   .string()
@@ -19,6 +20,7 @@ const tagsSchema = z
 
 const blogValidation = z.object({
   title: z.string(),
+  slug: z.string(),
   tags: tagsSchema,
   summary: z
     .string()
@@ -27,7 +29,7 @@ const blogValidation = z.object({
 });
 
 export async function create(formData: FormData) {
-  // TODO: data
+  // TODO: data add tags
   // const data = {
   //   title: formData.get("title"),
   //   tags: formData.get("tags"),
@@ -35,8 +37,16 @@ export async function create(formData: FormData) {
   //   content: formData.get("content"),
   // };
 
+  const title = formData.get("title");
+  let slug = "";
+
+  if (typeof title === "string") {
+    slug = slugify(title);
+  }
+
   const data = {
-    title: formData.get("title"),
+    title: title,
+    slug: slug,
     summary: "TODO: summary",
     content: formData.get("content"),
   };

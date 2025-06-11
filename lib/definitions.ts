@@ -12,7 +12,7 @@ export type SessionData = {
 
 export type Blog = {
   title: string;
-  url: string;
+  slug: string;
   tags: string[];
   summary: string;
   content: string;

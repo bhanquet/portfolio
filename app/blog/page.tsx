@@ -53,16 +53,19 @@ export default async function Page() {
           {/* TODO: Add suspense */}
           {blogs.map((blog) => (
             <Card key={blog.title} className="mt-5">
-              <p className="mb-2">
-                <span className="p-1 px-2 rounded-full bg-blue-200">
-                  {blog.tags?.join(",")}
-                </span>
-              </p>
+              {blog.tags && blog.tags.length > 0 && (
+                <p className="mb-2">
+                  <span className="p-1 px-2 rounded-full bg-blue-200">
+                    {blog.tags.join(",")}
+                  </span>
+                </p>
+              )}
+
               <h2 className="text-2xl mb-3">{blog.title}</h2>
               <p className="text-gray-700">{blog.summary}</p>
 
               <div className="mt-3">
-                <Button href={blog.url}>Read More...</Button>
+                <Button href={`blog/${blog.slug}`}>Read More...</Button>
               </div>
             </Card>
           ))}
