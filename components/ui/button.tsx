@@ -17,7 +17,7 @@ export default function Button({
     event: React.MouseEvent<HTMLButtonElement>,
   ) => void | Promise<void>;
 }) {
-  const baseStyle = "rounded-md py-2 px-4 shadow-md";
+  const baseStyle = "rounded-md py-2 px-4 shadow-md inline-block";
   const variantStyle =
     variant === "primary"
       ? "bg-[#061e36] hover:bg-[#041729] text-white "
