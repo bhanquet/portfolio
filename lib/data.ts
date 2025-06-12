@@ -1,19 +1,22 @@
 import { getDB } from "@/lib/mongodb";
 import { Blog } from "./definitions";
 
+function toBlog(doc: any): Blog {
+  return {
+    title: doc.title,
+    slug: doc.slug,
+    date: new Date(doc.date),
+    tags: doc.tags,
+    summary: doc.summary,
+    content: doc.content,
+  };
+}
+
 export async function fetchBlogs(): Promise<Blog[]> {
   const db = await getDB();
   const blogsDoc = await db.collection("blogs").find().toArray();
 
-  const blogs: Blog[] = blogsDoc.map((blog) => ({
-    title: blog.title,
-    slug: blog.slug,
-    tags: blog.tags,
-    summary: blog.summary,
-    content: blog.content,
-  }));
-
-  return blogs;
+  return blogsDoc.map(toBlog);
 }
 
 export async function fetchBlog(slug: string): Promise<Blog | null> {
@@ -22,21 +25,7 @@ export async function fetchBlog(slug: string): Promise<Blog | null> {
 
   if (!blogDoc) return null;
 
-  const {
-    title = "",
-    slug: safeSlug = "",
-    tags = [],
-    summary = "",
-    content = "",
-  } = blogDoc;
-
-  return {
-    title,
-    slug: safeSlug,
-    tags,
-    summary,
-    content,
-  };
+  return toBlog(blogDoc);
 }
 
 export async function fetchAllTags(): Promise<string[]> {
