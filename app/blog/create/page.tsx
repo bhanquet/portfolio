@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import Button from "@/components/ui/button";
 import Input from "@/components/ui/form/input";
 import TipTapEditor from "@/components/ui/editor";
-import { create } from "@/actions/blog/create";
+import { create } from "@/actions/blog";
 
 export default async function Page() {
   const session = await getSession();

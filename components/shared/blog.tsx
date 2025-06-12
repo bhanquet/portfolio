@@ -5,6 +5,8 @@ import { Blog } from "@/lib/definitions";
 import TipTapEditor from "@/components/ui/editor";
 import Button from "@/components/ui/button";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { save } from "@/actions/blog";
 
 export default function BlogPage({
   blog,
@@ -14,18 +16,37 @@ export default function BlogPage({
   canEdit: boolean;
 }) {
   const [editing, setEditing] = useState(false);
+  const [editingBlog, setEditingBlog] = useState<Blog>(blog);
+  const router = useRouter();
 
   return (
     <div className="max-w-3xl mx-auto mt-8">
       {canEdit && (
         <div className="mb-4">
-          <Button
-            onClick={() => {
-              setEditing(!editing);
-            }}
-          >
-            {editing ? "Save" : "Edit"}
-          </Button>
+          {editing ? (
+            <Button
+              key="saveButton"
+              onClick={async () => {
+                const newBlog = await save(editingBlog);
+                if (newBlog) {
+                  setEditingBlog(newBlog);
+                  setEditing(false);
+                  router.replace("/blog/" + newBlog.slug);
+                }
+              }}
+            >
+              Save
+            </Button>
+          ) : (
+            <Button
+              key="editButton"
+              onClick={() => {
+                setEditing(true);
+              }}
+            >
+              Edit
+            </Button>
+          )}
         </div>
       )}
 
@@ -35,6 +56,9 @@ export default function BlogPage({
           name="title"
           className="text-5xl font-bold"
           defaultValue={blog.title}
+          onChange={(e) => {
+            setEditingBlog({ ...editingBlog, title: e.target.value });
+          }}
         />
       ) : (
         <h1 key="titleDisplay" className="text-5xl font-bold">
