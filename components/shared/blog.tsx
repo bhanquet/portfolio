@@ -90,7 +90,12 @@ export default function BlogPage({
       {/* Blog content */}
       {editing ? (
         <div key="editor" className="border border-orange-300 rounded-md p-3">
-          <TipTapEditor editorContent={blog.content} inputName="content" />
+          <TipTapEditor
+            editorContent={blog.content}
+            onEditorChange={(content) =>
+              setEditingBlog({ ...editingBlog, content })
+            }
+          />
         </div>
       ) : (
         <div
