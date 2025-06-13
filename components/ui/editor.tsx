@@ -36,7 +36,10 @@ export default function TipTapEditor({
         },
       }),
       Placeholder.configure({ placeholder: "Write here..." }),
-      Image,
+      Image.configure({
+        inline: false,
+        allowBase64: true,
+      }),
       Link.configure({
         openOnClick: true,
         autolink: true,
@@ -113,6 +116,33 @@ export default function TipTapEditor({
     editorProps: {
       attributes: {
         class: "prose focus:outline-none",
+      },
+      handleDrop(view, event) {
+        const files = event.dataTransfer?.files;
+        if (!files || files.length === 0) {
+          return false; // No files to handle
+        }
+
+        const file = files[0];
+        if (!file.type.startsWith("image/")) {
+          return false; // Only handle image files
+        }
+
+        const reader = new FileReader();
+        reader.onload = () => {
+          const base64Image = reader.result as string;
+          console.log("Base64 Image:", base64Image);
+          if (typeof base64Image === "string") {
+            const imageNode = view.state.schema.nodes.image.create({
+              src: base64Image,
+              alt: file.name,
+            });
+            const transaction = view.state.tr.replaceSelectionWith(imageNode);
+            view.dispatch(transaction);
+          }
+        };
+        reader.readAsDataURL(file);
+        return true; // Prevent default handling
       },
     },
   });
