@@ -11,11 +11,13 @@ import { save } from "@/actions/blog";
 export default function BlogPage({
   blog,
   canEdit,
+  edit = false,
 }: {
   blog: Blog;
   canEdit: boolean;
+  edit?: boolean;
 }) {
-  const [editing, setEditing] = useState(false);
+  const [editing, setEditing] = useState(edit);
   const [editingBlog, setEditingBlog] = useState<Blog>(blog);
   const router = useRouter();
 

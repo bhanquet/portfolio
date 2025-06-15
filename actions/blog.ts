@@ -8,7 +8,9 @@ import { getSession } from "@/lib/session";
 
 const blogValidation = z.object({
   title: z.string(),
-  slug: z.string(),
+  slug: z.string().refine((val) => !val.includes("new-page"), {
+    message: "Value cannot contain 'new-page'",
+  }),
   tags: z.array(
     z
       .string()
@@ -22,34 +24,6 @@ const blogValidation = z.object({
   content: z.string(),
 });
 
-export async function create(formData: FormData) {
-  const title = formData.get("title");
-  let slug = "";
-
-  if (typeof title === "string") {
-    slug = slugify(title);
-  }
-
-  const data = {
-    title: title,
-    slug: slug,
-    summary: "TODO: summary",
-    tags: ["test"],
-    content: formData.get("content"),
-  };
-
-  const result = blogValidation.safeParse(data);
-  if (!result.success) {
-    console.error(result.error.flatten());
-    // TODO: handle errors
-    return;
-  }
-
-  let db = await getDB();
-  let blogs = db.collection("blogs");
-  await blogs.insertOne(result.data);
-}
-
 export async function save(blog: Blog): Promise<Blog | undefined> {
   const session = await getSession();
   if (!session || session.userRole !== "admin") {
@@ -61,7 +35,6 @@ export async function save(blog: Blog): Promise<Blog | undefined> {
   blog.date = new Date();
   blog.tags = blog.tags?.map((tag) => tag.toLowerCase()) || [];
 
-  console.log("Saving blog:", blog);
   const result = blogValidation.safeParse(blog);
   if (!result.success) {
     console.error(result.error.flatten());

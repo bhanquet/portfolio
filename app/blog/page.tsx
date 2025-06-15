@@ -24,7 +24,7 @@ export default async function Page() {
               </div>
               <div className="mb-3">
                 <Button
-                  href="/blog/create"
+                  href="/blog/new-page"
                   variant="secondary"
                   className="block w-1/2"
                 >
