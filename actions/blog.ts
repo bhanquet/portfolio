@@ -8,8 +8,8 @@ import { getSession } from "@/lib/session";
 
 const blogValidation = z.object({
   title: z.string(),
-  slug: z.string().refine((val) => !val.includes("new-page"), {
-    message: "Value cannot contain 'new-page'",
+  slug: z.string().refine((val) => val !== "new-page", {
+    message: "Url cannot be 'new-page'",
   }),
   tags: z.array(
     z
@@ -24,10 +24,10 @@ const blogValidation = z.object({
   content: z.string(),
 });
 
-export async function save(blog: Blog): Promise<Blog | undefined> {
+export async function save(blog: Blog): Promise<Blog | { error: string }> {
   const session = await getSession();
   if (!session || session.userRole !== "admin") {
-    return;
+    return { error: "Not autorized" };
   }
 
   const oldSlug = blog.slug;
@@ -38,15 +38,25 @@ export async function save(blog: Blog): Promise<Blog | undefined> {
   const result = blogValidation.safeParse(blog);
   if (!result.success) {
     console.error(result.error.flatten());
-    return;
+    return { error: result.error.message };
   }
-  const db = await getDB();
-  let blogs = db.collection("blogs");
-  await blogs.updateOne(
-    { slug: oldSlug },
-    { $set: result.data },
-    { upsert: true },
-  );
 
-  return result.data;
+  try {
+    const db = await getDB();
+    let blogs = db.collection("blogs");
+    await blogs.updateOne(
+      { slug: oldSlug },
+      { $set: result.data },
+      { upsert: true },
+    );
+
+    return result.data;
+  } catch (error: any) {
+    if (error.code === 11000) {
+      return { error: `A blog with the slug "${blog.slug}" already exists.` };
+    }
+
+    console.error("Unexpected error during save:", error);
+    return { error: "Unexpected server error" };
+  }
 }

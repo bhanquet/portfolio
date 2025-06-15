@@ -1,12 +1,24 @@
-import { MongoClient } from "mongodb";
+import { Db, MongoClient } from "mongodb";
+
+let didSetup = false;
 
 const uri = process.env.MONGODB_URI;
-const db = process.env.MONGODB_DB || "portfolio";
+const dbName = process.env.MONGODB_DB || "portfolio";
 
 if (!uri) throw new Error("Missing MONGODB_URI");
 
 const client = new MongoClient(uri);
 
+async function setup(db: Db) {
+  await db.collection("blogs").createIndex({ slug: 1 }, { unique: true });
+  didSetup = true;
+
+  console.log("Index created successfully");
+}
+
 export async function getDB() {
-  return client.db(db);
+  const db = client.db(dbName);
+  if (!didSetup) setup(db);
+
+  return db;
 }

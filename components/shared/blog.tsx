@@ -29,12 +29,17 @@ export default function BlogPage({
             <Button
               key="saveButton"
               onClick={async () => {
-                const newBlog = await save(editingBlog);
-                if (newBlog) {
-                  setEditingBlog(newBlog);
-                  setEditing(false);
-                  router.replace("/blog/" + newBlog.slug);
+                const result = await save(editingBlog);
+
+                if ("error" in result) {
+                  // TODO: Show the error
+                  console.log("Save failed: ", result.error);
+                  return;
                 }
+
+                setEditingBlog(result);
+                setEditing(false);
+                router.replace("/blog/" + result.slug);
               }}
             >
               Save
