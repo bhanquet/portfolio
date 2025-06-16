@@ -5,6 +5,7 @@ import { getSession } from "@/lib/session";
 import { signout } from "@/actions/auth";
 import { fetchAllTags, fetchBlogs } from "@/lib/data";
 import { Blog } from "@/lib/definitions";
+import Tags from "@/components/ui/tags";
 
 export default async function Page() {
   const session = await getSession();
@@ -53,20 +54,21 @@ export default async function Page() {
           {/* TODO: Add suspense */}
           {blogs.map((blog) => (
             <Card key={blog.title} className="mt-5">
-              {blog.tags && blog.tags.length > 0 && (
-                <p className="mb-2">
-                  <span className="p-1 px-2 rounded-full bg-blue-200">
-                    {blog.tags.join(",")}
-                  </span>
-                </p>
+              <h2 className="text-2xl mb-3">
+                <a
+                  className="hover:underline hover:text-gray-700"
+                  href={`blog/${blog.slug}`}
+                >
+                  {blog.title}
+                </a>
+              </h2>
+              {blog.tags?.length > 0 && (
+                <div className="mb-3">
+                  <Tags tags={blog.tags} />
+                </div>
               )}
 
-              <h2 className="text-2xl mb-3">{blog.title}</h2>
               <p className="text-gray-700">{blog.summary}</p>
-
-              <div className="mt-3">
-                <Button href={`blog/${blog.slug}`}>Read More...</Button>
-              </div>
             </Card>
           ))}
         </div>
