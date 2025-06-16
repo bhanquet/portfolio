@@ -5,6 +5,7 @@ import { getDB } from "@/lib/mongodb";
 import { slugify } from "@/lib/utils";
 import { Blog } from "@/lib/definitions";
 import { getSession } from "@/lib/session";
+import { JSDOM } from "jsdom";
 
 const blogValidation = z.object({
   title: z.string(),
@@ -34,6 +35,7 @@ export async function save(blog: Blog): Promise<Blog | { error: string }> {
   blog.slug = slugify(blog.title);
   blog.date = new Date();
   blog.tags = blog.tags?.map((tag) => tag.toLowerCase()) || [];
+  blog.summary = extractSummaryFromHTML(blog.content, 400);
 
   const result = blogValidation.safeParse(blog);
   if (!result.success) {
@@ -61,4 +63,31 @@ export async function save(blog: Blog): Promise<Blog | { error: string }> {
     console.error("Unexpected error during save:", error);
     return { error: "Unexpected server error" };
   }
+}
+
+function extractSummaryFromHTML(html: string, maxLength: number = 500): string {
+  const dom = new JSDOM(html);
+  const paragraphs = dom.window.document.querySelectorAll("p");
+
+  let summaryParts: string[] = [];
+  let currentLength = 0;
+
+  for (const p of paragraphs) {
+    const text = p.textContent?.trim() ?? "";
+    if (!text) continue;
+
+    if (currentLength + text.length > maxLength) {
+      const remaining = maxLength - currentLength;
+      summaryParts.push(text.slice(0, remaining));
+      currentLength = maxLength;
+      break;
+    }
+
+    summaryParts.push(text);
+    currentLength += text.length;
+  }
+
+  const summary = summaryParts.join(" ").trim();
+  console.log(summary.length);
+  return summary.length > maxLength ? summary + "…" : summary;
 }
