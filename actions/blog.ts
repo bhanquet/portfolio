@@ -15,7 +15,7 @@ const blogValidation = z.object({
     z
       .string()
       .regex(/^[a-z]+$/)
-      .max(10),
+      .max(20),
   ),
   date: z.date().default(() => new Date()), // Default to current date
   summary: z

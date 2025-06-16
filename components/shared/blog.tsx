@@ -19,6 +19,7 @@ export default function BlogPage({
 }) {
   const [editing, setEditing] = useState(edit);
   const [editingBlog, setEditingBlog] = useState<Blog>(blog);
+  const [newTag, setNewTag] = useState("");
   const router = useRouter();
 
   return (
@@ -74,12 +75,50 @@ export default function BlogPage({
       )}
 
       {/* Tags */}
-      {Array.isArray(blog.tags) && blog.tags.length > 0 && (
+      {Array.isArray(editingBlog.tags) && editingBlog.tags.length > 0 && (
         <div className="mt-4">
-          <div>
-            <Tags tags={blog.tags} />
-          </div>
+          <Tags
+            editable={editing}
+            tags={editingBlog.tags}
+            onTagRemove={(tagIndex) => {
+              const updatedTags = editingBlog.tags.filter(
+                (_, index) => index !== tagIndex,
+              );
+              setEditingBlog({ ...editingBlog, tags: updatedTags });
+            }}
+          />
         </div>
+      )}
+      {editing && (
+        <input
+          value={newTag}
+          className="mt-2 focus:ring-0 focus:border-none focus:outline-none"
+          type="text"
+          placeholder="Add tag"
+          onChange={(e) => {
+            setNewTag(
+              e.target.value
+                .replace(/[^a-zA-Z0-9]/g, "")
+                .toLowerCase()
+                .trim(),
+            );
+          }}
+          onBlur={(e) => {
+            if (!newTag) return;
+            const updatedTags = [...(editingBlog.tags || []), newTag];
+            setEditingBlog({ ...editingBlog, tags: updatedTags });
+            setNewTag("");
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              if (!newTag) return;
+              const updatedTags = [...(editingBlog.tags || []), newTag];
+              setEditingBlog({ ...editingBlog, tags: updatedTags });
+              setNewTag("");
+            }
+          }}
+        />
       )}
 
       {/* Date */}
