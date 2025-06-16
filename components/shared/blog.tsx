@@ -20,10 +20,16 @@ export default function BlogPage({
   const [editing, setEditing] = useState(edit);
   const [editingBlog, setEditingBlog] = useState<Blog>(blog);
   const [newTag, setNewTag] = useState("");
+  const [saveError, setSaveError] = useState<string | null>(null);
   const router = useRouter();
 
   return (
     <div className="max-w-3xl mx-auto mt-8">
+      {saveError && (
+        <div className="mb-4 p-4 bg-red-100 text-red-800 border border-red-300 rounded">
+          {saveError}
+        </div>
+      )}
       {canEdit && (
         <div className="mb-4">
           {editing ? (
@@ -32,9 +38,9 @@ export default function BlogPage({
               onClick={async () => {
                 const result = await save(editingBlog);
 
+                setSaveError(null);
                 if ("error" in result) {
-                  // TODO: Show the error
-                  console.log("Save failed: ", result.error);
+                  setSaveError(result.error);
                   return;
                 }
 

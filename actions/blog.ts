@@ -15,7 +15,7 @@ const blogValidation = z.object({
     z
       .string()
       .regex(/^[a-z]+$/)
-      .max(20),
+      .max(20, { message: "Tag must be less than 20 characters" }),
   ),
   date: z.date().default(() => new Date()), // Default to current date
   summary: z
@@ -37,8 +37,10 @@ export async function save(blog: Blog): Promise<Blog | { error: string }> {
 
   const result = blogValidation.safeParse(blog);
   if (!result.success) {
-    console.error(result.error.flatten());
-    return { error: result.error.message };
+    const issues = result.error.issues;
+    const formattedErrors = issues.map((issue) => issue.message);
+
+    return { error: `Validation failed: ${formattedErrors.join(", ")}` };
   }
 
   try {
