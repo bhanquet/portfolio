@@ -8,6 +8,15 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { save } from "@/actions/blog";
 import { BlogDate } from "@/components/ui/blogDate";
+import { Trash2 } from "lucide-react";
+import { AlertTriangle, X } from "lucide-react";
+import {
+  Description,
+  Dialog,
+  DialogBackdrop,
+  DialogPanel,
+  DialogTitle,
+} from "@headlessui/react";
 
 export default function BlogPage({
   blog,
@@ -22,6 +31,7 @@ export default function BlogPage({
   const [editingBlog, setEditingBlog] = useState<Blog>(blog);
   const [newTag, setNewTag] = useState("");
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const router = useRouter();
 
   return (
@@ -32,7 +42,7 @@ export default function BlogPage({
         </div>
       )}
       {canEdit && (
-        <div className="mb-4">
+        <div className="mb-4 flex place-content-between gap-2">
           {editing ? (
             <Button
               key="saveButton"
@@ -62,6 +72,61 @@ export default function BlogPage({
               Edit
             </Button>
           )}
+
+          {/* Delete */}
+          <button
+            className="text-red-600 p-2 rounded-md hover:bg-red-100"
+            onClick={() => setShowDeleteDialog(true)}
+          >
+            <Trash2 />
+          </button>
+          <Dialog
+            open={showDeleteDialog}
+            onClose={() => setShowDeleteDialog(false)}
+          >
+            <DialogBackdrop className="fixed inset-0 bg-black/15 backdrop-blur-sm" />
+            <div className="fixed inset-0 flex items-center justify-center p-4">
+              <DialogPanel className="w-full max-w-md overflow-hidden rounded-lg bg-white shadow-lg border border-gray-300">
+                {/* Header */}
+                <div className="flex items-center justify-between bg-red-600 px-6 py-4">
+                  <DialogTitle className="text-white font-semibold text-lg">
+                    Confirm Deletion
+                  </DialogTitle>
+                  <button onClick={() => setShowDeleteDialog(false)}>
+                    <X className="text-white hover:text-gray-300" />
+                  </button>
+                </div>
+                {/* Body */}
+                <div className="p-6 space-y-4 text-center">
+                  <AlertTriangle className="mx-auto text-red-500" size={48} />
+                  <Description>
+                    Are you sure you want to delete this blog post?
+                    <br />
+                    <span className="text-sm text-gray-500">
+                      This action cannot be undone.
+                    </span>
+                  </Description>
+                </div>
+
+                {/* footer */}
+                <div className="px-6 py-4 flex justify-end gap-4 bg-gray-50">
+                  <button
+                    onClick={() => setShowDeleteDialog(false)}
+                    className="px-4 py-2 rounded border text-gray-700 hover:bg-gray-100"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => setShowDeleteDialog(false)}
+                    className="px-4 py-2 flex items-center gap-2 rounded bg-red-600 text-white hover:bg-red-700"
+                  >
+                    <AlertTriangle size={16} />
+                    Delete
+                  </button>
+                </div>
+              </DialogPanel>
+            </div>
+          </Dialog>
         </div>
       )}
 
