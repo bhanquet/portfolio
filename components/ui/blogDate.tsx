@@ -3,6 +3,7 @@ export function BlogDate({ date }: { date: Date }) {
     year: "numeric",
     month: "long",
     day: "numeric",
+    timeZone: "UTC",
   };
   return (
     <time dateTime={date.toISOString()}>
