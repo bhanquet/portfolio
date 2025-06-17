@@ -131,7 +131,6 @@ export default function TipTapEditor({
         const reader = new FileReader();
         reader.onload = () => {
           const base64Image = reader.result as string;
-          console.log("Base64 Image:", base64Image);
           if (typeof base64Image === "string") {
             const imageNode = view.state.schema.nodes.image.create({
               src: base64Image,

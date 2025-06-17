@@ -89,6 +89,5 @@ function extractSummaryFromHTML(html: string, maxLength: number = 500): string {
   }
 
   const summary = summaryParts.join(" ").trim();
-  console.log(summary.length);
   return summary.length > maxLength ? summary + "…" : summary;
 }

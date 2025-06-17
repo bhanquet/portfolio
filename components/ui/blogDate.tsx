@@ -1,5 +1,4 @@
 export function BlogDate({ date }: { date: Date }) {
-  console.log(date);
   const options: Intl.DateTimeFormatOptions = {
     year: "numeric",
     month: "long",
