@@ -26,7 +26,7 @@ const blogValidation = z.object({
   content: z.string(),
 });
 
-export async function save(blog: Blog): Promise<Blog | { error: string }> {
+export async function saveBlog(blog: Blog): Promise<Blog | { error: string }> {
   const session = await getSession();
   if (!session || session.userRole !== "admin") {
     return { error: "Not autorized" };
@@ -64,6 +64,29 @@ export async function save(blog: Blog): Promise<Blog | { error: string }> {
     console.error("Unexpected error during save:", error);
     return { error: "Unexpected server error" };
   }
+}
+
+export async function deleteBlog(
+  slug: string,
+): Promise<{ error?: string; sucess: boolean }> {
+  const session = await getSession();
+  if (!session || session.userRole !== "admin") {
+    return { sucess: false, error: "Not autorized" };
+  }
+
+  try {
+    const db = await getDB();
+    const blogs = db.collection("blogs");
+    const result = await blogs.deleteOne({ slug: slug });
+
+    if (result.deletedCount === 1) {
+      return { sucess: true };
+    }
+  } catch {
+    return { sucess: false, error: "Unexpected error" };
+  }
+
+  return { sucess: false, error: "Error while deleting the blog" };
 }
 
 function extractSummaryFromHTML(html: string, maxLength: number = 500): string {

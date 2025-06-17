@@ -6,7 +6,7 @@ import TipTapEditor from "@/components/ui/editor";
 import Button from "@/components/ui/button";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { save } from "@/actions/blog";
+import { deleteBlog, saveBlog } from "@/actions/blog";
 import { BlogDate } from "@/components/ui/blogDate";
 import { Trash2 } from "lucide-react";
 import { AlertTriangle, X } from "lucide-react";
@@ -47,7 +47,7 @@ export default function BlogPage({
             <Button
               key="saveButton"
               onClick={async () => {
-                const result = await save(editingBlog);
+                const result = await saveBlog(editingBlog);
 
                 setSaveError(null);
                 if ("error" in result) {
@@ -117,7 +117,11 @@ export default function BlogPage({
                     Cancel
                   </button>
                   <button
-                    onClick={() => setShowDeleteDialog(false)}
+                    onClick={async () => {
+                      await deleteBlog(editingBlog.slug);
+                      setShowDeleteDialog(false);
+                      router.back();
+                    }}
                     className="px-4 py-2 flex items-center gap-2 rounded bg-red-600 text-white hover:bg-red-700"
                   >
                     <AlertTriangle size={16} />
