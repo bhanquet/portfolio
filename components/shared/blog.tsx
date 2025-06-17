@@ -7,6 +7,7 @@ import Button from "@/components/ui/button";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { save } from "@/actions/blog";
+import { BlogDate } from "@/components/ui/blogDate";
 
 export default function BlogPage({
   blog,
@@ -109,7 +110,7 @@ export default function BlogPage({
                 .trim(),
             );
           }}
-          onBlur={(e) => {
+          onBlur={() => {
             if (!newTag) return;
             const updatedTags = [...(editingBlog.tags || []), newTag];
             setEditingBlog({ ...editingBlog, tags: updatedTags });
@@ -128,16 +129,14 @@ export default function BlogPage({
       )}
 
       {/* Date */}
-      {blog.date instanceof Date && !isNaN(blog.date.getTime()) && (
-        <p className="mt-4 italic text-gray-600">
-          Published on{" "}
-          {new Intl.DateTimeFormat("en-US", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          }).format(blog.date)}
-        </p>
-      )}
+      <p className="mt-4 italic text-gray-600">
+        Created on <BlogDate date={blog.createdDate} />
+        {"editedDate" in blog && blog.editedDate && (
+          <span>
+            , edited on <BlogDate date={blog.editedDate} />
+          </span>
+        )}
+      </p>
 
       {/* Blog content */}
       {editing ? (

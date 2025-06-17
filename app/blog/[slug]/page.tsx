@@ -21,7 +21,7 @@ export default async function Page({
     blog = {
       title: "New Page",
       slug: "new-page",
-      date: new Date(),
+      createdDate: new Date(),
       tags: [],
       summary: "",
       content: "",

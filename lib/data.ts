@@ -5,7 +5,8 @@ function toBlog(doc: any): Blog {
   return {
     title: doc.title,
     slug: doc.slug,
-    date: new Date(doc.date),
+    createdDate: new Date(doc.createdDate),
+    editedDate: doc.editedDate ? new Date(doc.editedDate) : null,
     tags: doc.tags,
     summary: doc.summary,
     content: doc.content,

@@ -18,7 +18,8 @@ const blogValidation = z.object({
       .regex(/^[a-z]+$/)
       .max(20, { message: "Tag must be less than 20 characters" }),
   ),
-  date: z.date().default(() => new Date()), // Default to current date
+  createdDate: z.date().default(() => new Date()), // Default to current date
+  editedDate: z.date().nullable(),
   summary: z
     .string()
     .max(500, { message: "summary must be less then 500 characters" }),
@@ -33,7 +34,7 @@ export async function save(blog: Blog): Promise<Blog | { error: string }> {
 
   const oldSlug = blog.slug;
   blog.slug = slugify(blog.title);
-  blog.date = new Date();
+  blog.editedDate = oldSlug === "new-page" ? null : new Date();
   blog.tags = blog.tags?.map((tag) => tag.toLowerCase()) || [];
   blog.summary = extractSummaryFromHTML(blog.content, 400);
 

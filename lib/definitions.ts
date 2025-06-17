@@ -13,7 +13,8 @@ export type SessionData = {
 export type Blog = {
   title: string;
   slug: string;
-  date: Date;
+  createdDate: Date;
+  editedDate?: Date | null;
   tags: string[];
   summary: string;
   content: string;
