@@ -1,16 +1,30 @@
-import Input from "@/components/ui/form/input";
 import Card from "@/components/ui/card";
 import Button from "@/components/ui/button";
 import { getSession } from "@/lib/session";
 import { signout } from "@/actions/auth";
-import { fetchAllTags, fetchBlogs } from "@/lib/data";
+import { fetchAllTags, fetchBlogs, fetchBlogsCount } from "@/lib/data";
 import { Blog } from "@/lib/definitions";
 import Tags from "@/components/ui/tags";
+import Search from "@/components/ui/search";
+import Pagination from "@/components/ui/pagination";
 
-export default async function Page() {
+export default async function Page(props: {
+  searchParams?: Promise<{ search?: string; page?: number }>;
+}) {
   const session = await getSession();
+
+  const searchParams = await props.searchParams;
+  const search = searchParams?.search || "";
+  const page = searchParams?.page || 1;
+  const maxItem = 10;
+  const totalPages = Math.ceil((await fetchBlogsCount(search)) / maxItem);
+
   const tags = await fetchAllTags();
-  const blogs: Blog[] = (await fetchBlogs()) || [];
+  const blogs: Blog[] = await fetchBlogs({
+    searchQuery: search,
+    maxItem,
+    page,
+  });
 
   return (
     <>
@@ -50,7 +64,7 @@ export default async function Page() {
           <h1 className="mb-4 text-center text-strongcolor text-2xl">
             Sharing thought and ideas
           </h1>
-          <Input placeholder="Search..." />
+          <Search />
           {/* TODO: Add suspense */}
           {blogs.map((blog) => (
             <Card key={blog.title} className="mt-5">
@@ -71,6 +85,10 @@ export default async function Page() {
               <p className="text-gray-700">{blog.summary}</p>
             </Card>
           ))}
+
+          <div className="mt-5">
+            <Pagination totalPages={totalPages} />
+          </div>
         </div>
       </div>
     </>
