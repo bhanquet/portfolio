@@ -36,7 +36,7 @@ export async function saveBlog(blog: Blog): Promise<Blog | { error: string }> {
   blog.slug = slugify(blog.title);
   blog.editedDate = oldSlug === "new-page" ? null : new Date();
   blog.tags = blog.tags?.map((tag) => tag.toLowerCase()) || [];
-  blog.summary = extractSummaryFromHTML(blog.content, 400);
+  blog.summary = extractSummaryFromHTML(blog.content, 200);
 
   const result = blogValidation.safeParse(blog);
   if (!result.success) {

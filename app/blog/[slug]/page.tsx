@@ -39,6 +39,8 @@ export default async function Page({
   blog.content = purify.sanitize(blog.content);
 
   return (
-    <Blog blog={blog} canEdit={session?.userRole === "admin"} edit={edit} />
+    <div className="bg-white p-5 pb-32 rounded-md">
+      <Blog blog={blog} canEdit={session?.userRole === "admin"} edit={edit} />
+    </div>
   );
 }

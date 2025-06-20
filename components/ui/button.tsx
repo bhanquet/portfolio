@@ -1,57 +1,62 @@
 import Link from "next/link";
 import { ReactNode } from "react";
-import ExternalLinkIcon from "./icons/external-link-icon";
+import clsx from "clsx";
+import { ExternalLink } from "lucide-react";
+
+type ButtonProps = {
+  children: ReactNode;
+  href?: string;
+  variant?: "primary" | "secondary" | "default";
+  className?: string;
+  onClick?: (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => void | Promise<void>;
+};
 
 export default function Button({
   children,
   href,
   variant = "primary",
-  className = "",
+  className,
   onClick,
-}: {
-  children: ReactNode;
-  href?: string;
-  variant?: "primary" | "secondary";
-  className?: string;
-  onClick?: (
-    event: React.MouseEvent<HTMLButtonElement>,
-  ) => void | Promise<void>;
-}) {
-  const baseStyle = "rounded-md py-2 px-4 shadow-md inline-block";
-  const variantStyle =
-    variant === "primary"
-      ? "bg-[#061e36] hover:bg-[#041729] text-white "
-      : "bg-[#dedede] hover:bg-[#C9C9C9]";
-  const combinedClassName = `${baseStyle} ${variantStyle} ${className}`.trim();
+}: ButtonProps) {
+  const classes = clsx(
+    "rounded-md py-2 px-4 shadow-md inline-block transition-colors",
+    {
+      "bg-strongcolor hover:bg-[#0c6da6] text-white": variant === "primary",
+      "bg-[#dedede] hover:bg-[#C9C9C9] text-black": variant !== "primary",
+    },
+    className,
+  );
 
   if (href) {
-    const isExternal =
-      href.startsWith("http://") || href.startsWith("https://");
+    const isExternal = /^https?:\/\//.test(href);
 
-    return isExternal ? (
-      <>
+    if (isExternal) {
+      return (
         <a
           href={href}
-          className={combinedClassName}
+          className={classes}
           target="_blank"
           rel="noopener noreferrer"
-          style={{ display: "flex", alignItems: "center" }}
         >
-          <span className="mr-2">
-            <ExternalLinkIcon size={16} />
+          <span className="inline-flex items-center gap-2">
+            <ExternalLink size={16} />
+            {children}
           </span>
-          {children}
         </a>
-      </>
-    ) : (
-      <Link className={combinedClassName} href={href}>
+      );
+    }
+
+    return (
+      <Link href={href} className={classes}>
         {children}
       </Link>
     );
   }
 
   return (
-    <button className={combinedClassName} onClick={onClick}>
+    <button className={classes} onClick={onClick}>
       {children}
     </button>
   );
