@@ -22,6 +22,7 @@ export default function Search() {
 
   return (
     <Input
+      autoComplete="off"
       placeholder="Search..."
       onChange={(e) => {
         handleSearch(e.target.value);
