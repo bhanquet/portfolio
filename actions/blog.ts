@@ -12,6 +12,7 @@ const blogValidation = z.object({
   slug: z.string().refine((val) => val !== "new-page", {
     message: "Url cannot be 'new-page'",
   }),
+  imagePath: z.string().nullable(),
   tags: z.array(
     z
       .string()

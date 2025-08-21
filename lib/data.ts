@@ -8,6 +8,7 @@ function toBlog(doc: any): Blog {
     createdDate: new Date(doc.createdDate),
     editedDate: doc.editedDate ? new Date(doc.editedDate) : null,
     tags: doc.tags,
+    imagePath: doc.imagePath,
     summary: doc.summary,
     content: doc.content,
   };

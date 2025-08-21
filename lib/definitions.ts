@@ -16,6 +16,7 @@ export type Blog = {
   createdDate: Date;
   editedDate?: Date | null;
   tags: string[];
+  imagePath?: string | null;
   summary: string;
   content: string;
 };

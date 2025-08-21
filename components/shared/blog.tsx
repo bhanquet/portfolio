@@ -4,7 +4,7 @@ import Tags from "@/components/ui/tags";
 import { Blog } from "@/lib/definitions";
 import TipTapEditor from "@/components/ui/editor";
 import Button from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { deleteBlog, saveBlog } from "@/actions/blog";
 import { BlogDate } from "@/components/ui/blogDate";
@@ -17,6 +17,8 @@ import {
   DialogPanel,
   DialogTitle,
 } from "@headlessui/react";
+import ImageUploader from "../ui/imageUploader";
+import { deleteImage, uploadImage } from "@/actions/imageUploader";
 
 export default function BlogPage({
   blog,
@@ -29,16 +31,18 @@ export default function BlogPage({
 }) {
   const [editing, setEditing] = useState(edit);
   const [editingBlog, setEditingBlog] = useState<Blog>(blog);
+  const [isPending, startTransition] = useTransition();
   const [newTag, setNewTag] = useState("");
-  const [saveError, setSaveError] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const router = useRouter();
 
+
   return (
     <div className="max-w-3xl mx-auto mt-8">
-      {saveError && (
+      {errorMessage && (
         <div className="mb-4 p-4 bg-red-100 text-red-800 border border-red-300 rounded">
-          {saveError}
+          {errorMessage}
         </div>
       )}
       {canEdit && (
@@ -49,9 +53,9 @@ export default function BlogPage({
               onClick={async () => {
                 const result = await saveBlog(editingBlog);
 
-                setSaveError(null);
+                setErrorMessage(null);
                 if ("error" in result) {
-                  setSaveError(result.error);
+                  setErrorMessage(result.error);
                   return;
                 }
 
@@ -149,6 +153,43 @@ export default function BlogPage({
           {blog.title}
         </h1>
       )}
+
+      {editing ? (
+        <ImageUploader
+          imagePath={editingBlog.imagePath || null}
+          setImagePath={() => {}}
+          onUpload={(file: File) => {
+            startTransition(async () => {
+              const result = await uploadImage(file);
+              if (result.error) {
+                setErrorMessage(result.error);
+              } else if (result.path) {
+                setEditingBlog({ ...editingBlog, imagePath: result.path });
+              }
+            });
+          }}
+          onDelete={(file) => {
+            startTransition(async () => {
+              const result = await deleteImage(file);
+
+              if (result.error) {
+                setErrorMessage(result.error);
+              } else if (result.success) {
+                setEditingBlog({ ...editingBlog, imagePath: null });
+              }
+            });
+          }}
+          isPending={isPending}
+        />
+      ) : blog.imagePath ? (
+        <div className="mt-2 rounded-lg overflow-hidden shadow-md border border-gray-200">
+          <img
+            src={blog.imagePath}
+            alt="Blog cover"
+            className="w-full h-64 object-cover"
+          />
+        </div>
+      ) : null}
 
       {/* Tags */}
       {Array.isArray(editingBlog.tags) && editingBlog.tags.length > 0 && (
