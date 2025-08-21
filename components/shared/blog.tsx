@@ -37,6 +37,21 @@ export default function BlogPage({
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const router = useRouter();
 
+  useEffect(() => {
+    // Show confirmation dialog on page unload if editing
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (editing) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [editing]);
 
   return (
     <div className="max-w-3xl mx-auto mt-8">
