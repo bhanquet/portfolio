@@ -1,14 +1,11 @@
-import Card from "@/components/ui/card";
 import Button from "@/components/ui/button";
 import { getSession } from "@/lib/session";
 import { fetchAllTags, fetchBlogs, fetchBlogsCount } from "@/lib/data";
 import { Blog } from "@/lib/definitions";
 import Search from "@/components/ui/search";
 import Pagination from "@/components/ui/pagination";
-import { Plus, Tag } from "lucide-react";
-import { BlogDate } from "@/components/ui/blogDate";
-import Image from "next/image";
-import Link from "next/link";
+import { Plus } from "lucide-react";
+import { BlogList } from "@/components/ui/blogsList";
 
 export default async function Page(props: {
   searchParams?: Promise<{ search?: string; page?: number }>;
@@ -60,42 +57,7 @@ export default async function Page(props: {
           )}
           <Search />
 
-          {blogs.map((blog) => (
-            <Link key={blog.title} href={`blog/${blog.slug}`} className="block">
-              <Card className="mt-5 p-8 flex flex-col md:flex-row gap-7 cursor-pointer hover:shadow-xl transition-shadow">
-                {/* Text */}
-                <div className="flex-1">
-                  <h2 className="text-2xl">{blog.title}</h2>
-                  <p className="text-gray-500 mb-3">
-                    <BlogDate date={blog.createdDate} />
-                  </p>
-
-                  <p className="text-gray-700">{blog.summary}</p>
-
-                  {blog.tags?.length > 0 && (
-                    <div className="mt-3">
-                      <p className="text-strongcolor flex items-center gap-2">
-                        <Tag size={16} />
-                        {blog.tags.join(", ")}
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                {/* Image */}
-                {blog.imagePath && (
-                  <div className="w-1/4 aspect-[4/3] relative mr-6">
-                    <Image
-                      src={blog.imagePath}
-                      alt={blog.title}
-                      className="w-full h-full object-cover rounded-xl shadow border"
-                      fill={true}
-                    />
-                  </div>
-                )}
-              </Card>
-            </Link>
-          ))}
+          <BlogList blogs={blogs} />
 
           <div className="mt-5">
             <Pagination totalPages={totalPages} />

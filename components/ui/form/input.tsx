@@ -9,6 +9,7 @@ export default function Input({
                   border-2 outline-none
                   shadow-sm
                   focus:border-b-2 focus:border-b-blue-200
+                  transition-colors
                   ${className}
                 `}
     />
