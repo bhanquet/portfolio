@@ -4,6 +4,7 @@ import Tags from "@/components/ui/tags";
 import { Blog } from "@/lib/definitions";
 import TipTapEditor from "@/components/ui/editor";
 import Button from "@/components/ui/button";
+import Image from "next/image";
 import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { deleteBlog, saveBlog } from "@/actions/blog";
@@ -197,11 +198,12 @@ export default function BlogPage({
           isPending={isPending}
         />
       ) : blog.imagePath ? (
-        <div className="mt-2 rounded-lg overflow-hidden shadow-md border border-gray-200">
-          <img
+        <div className="mt-2 rounded-lg overflow-hidden shadow-md border border-gray-200 relative h-64">
+          <Image
             src={blog.imagePath}
             alt="Blog cover"
-            className="w-full h-64 object-cover"
+            className="object-cover"
+            fill={true}
           />
         </div>
       ) : null}
