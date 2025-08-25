@@ -69,16 +69,26 @@ export async function fetchAllTags(): Promise<string[]> {
   return Array.from(tagsSet);
 }
 
+export async function fetchBlogsByTag(tag: string): Promise<Blog[]> {
+  const db = await getDB();
+  const blogsDoc = await db.collection("blogs")
+    .find({ tags: { $in: [tag] } })
+    .sort({ createdDate: -1 })
+    .toArray();
+
+  return blogsDoc.map(toBlog);
+}
+
 // -- Helper functions
 function buildSearchFilter(query: string | undefined): Record<string, any> {
   return query
     ? {
-        $or: [
-          { title: { $regex: query, $options: "i" } },
-          { summary: { $regex: query, $options: "i" } },
-          { content: { $regex: query, $options: "i" } },
-          { tags: { $regex: query, $options: "i" } },
-        ],
-      }
+      $or: [
+        { title: { $regex: query, $options: "i" } },
+        { summary: { $regex: query, $options: "i" } },
+        { content: { $regex: query, $options: "i" } },
+        { tags: { $regex: query, $options: "i" } },
+      ],
+    }
     : {};
 }
