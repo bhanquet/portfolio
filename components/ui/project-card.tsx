@@ -31,7 +31,7 @@ export default function ProjectCard({
         initial="rest"
         whileHover="hover"
         variants={cardVariants}
-        className="relative w-full max-w-sm overflow-hidden rounded-2xl shadow-lg cursor-pointer "
+        className="relative w-full overflow-hidden rounded-2xl shadow-lg cursor-pointer "
       >
 
         {/* Project Image  */}

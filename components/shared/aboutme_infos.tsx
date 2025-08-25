@@ -1,5 +1,5 @@
 "use client";
-import { motion, Variants } from "framer-motion";
+import { Variants, motion } from "motion/react";
 
 const container: Variants = {
   hidden: { opacity: 0, y: 30 },
@@ -7,8 +7,8 @@ const container: Variants = {
     opacity: 1,
     y: 0,
     transition: {
-      staggerChildren: 0.3,
-      duration: 0.8,
+      staggerChildren: 0.1,
+      duration: 0.6,
     },
   },
 };

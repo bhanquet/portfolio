@@ -6,7 +6,7 @@ import Contact from "@/components/shared/contact";
 
 export default function Home() {
   return (
-    <div className="scroll-smooth lg:snap-y snap-mandatory h-screen overflow-y-scroll">
+    <div className="scroll-smooth h-screen overflow-y-scroll">
       <div className="snap-start bg-background min-h-screen flex flex-col">
         <Header />
         <Hero />

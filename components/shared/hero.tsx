@@ -11,8 +11,8 @@ export default function Hero() {
       opacity: 1,
       x: 0,
       transition: {
-        staggerChildren: 0.2,
-        duration: 1,
+        staggerChildren: 0.1,
+        duration: 0.6,
       },
     },
     hidden: { opacity: 0, x: -15 },
@@ -56,9 +56,9 @@ export default function Hero() {
       </motion.div>
       <motion.div
         className="hidden lg:block self-end flex-shrink-0"
-        initial={{ opacity: 0, x: 0 }}
+        initial={{ opacity: 0, x: 50 }}
         animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.4, delay: 0.8 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
       >
         <Image src={brianHeroImage} alt="Image of Brian Hanquet" width={700} />
       </motion.div>
