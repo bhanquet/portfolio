@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+    <defs>
+        <linearGradient id="b" x1="68.35" y1="282.6" x2="583.17" y2="797.43" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#fff2ed"/>
+            <stop offset="1" stop-color="#bdb4b0"/>
+        </linearGradient>
+        <linearGradient id="c" x1="284.59" y1="253.9" x2="814.74" y2="784.05" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#fff2ed"/>
+            <stop offset="1" stop-color="#b3aaa6"/>
+        </linearGradient>
+        <radialGradient id="a" cx="500" cy="500" fx="500" fy="500" r="482.5" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#182333"/>
+            <stop offset="1" stop-color="#0a0e14"/>
+        </radialGradient>
+    </defs>
+    <circle cx="500" cy="500" r="482.5" style="fill:url(#a)"/>
+    <path d="M650.4 647.58c0 52.51-24.5 107.12-67.23 149.84-42.72 42.72-97.34 67.23-149.85 67.23s-107.12-24.5-149.84-67.23c-42.72-42.72-67.23-97.33-67.23-149.84V134.7l62.02 62.36v450.52c0 36.18 17.88 74.81 49.06 105.99 31.18 31.18 69.81 49.06 105.99 49.06s74.81-17.88 105.99-49.06c31.18-31.18 49.06-69.81 49.06-105.99s-16.91-72.69-46.52-103.41v-79.83c14.59 9.38 28.49 20.55 41.32 33.38 42.72 42.72 67.23 97.34 67.23 149.85Z" style="fill:url(#b)"/>
+    <path d="m783.75 815.03-62.02 50.73V544.39c0-36.18-17.88-74.81-49.06-105.99-31.18-31.18-69.81-49.06-105.99-49.06H466.27v275.51h-62.02V134.23l62.02 62.83v130.26h100.41c52.51 0 107.12 24.5 149.85 67.23 42.72 42.72 67.23 97.34 67.23 149.85v270.64Z" style="fill:url(#c)"/>
+</svg>
