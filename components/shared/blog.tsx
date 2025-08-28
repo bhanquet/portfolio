@@ -44,7 +44,6 @@ export default function BlogPage({
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       if (editing) {
         e.preventDefault();
-        e.returnValue = "";
       }
     };
 
@@ -277,7 +276,7 @@ export default function BlogPage({
           <div key="editor" className="border border-orange-300 rounded-md p-3">
             <TipTapEditor
               editorContent={blog.content}
-              onEditorChange={(content) =>
+              onChangeAction={(content) =>
                 setEditingBlog({ ...editingBlog, content })
               }
             />
