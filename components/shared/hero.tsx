@@ -55,7 +55,7 @@ export default function Hero() {
         </motion.div>
       </motion.div>
       <motion.div
-        className="hidden lg:block self-end flex-shrink-0"
+        className="hidden lg:block self-end shrink-0"
         initial={{ opacity: 0, x: 50 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5, delay: 0.3 }}

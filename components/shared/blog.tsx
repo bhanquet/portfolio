@@ -63,7 +63,7 @@ export default function BlogPage({
     >
       <div className="max-w-3xl mx-auto mt-8">
         {errorMessage && (
-          <div className="mb-4 p-4 bg-red-100 text-red-800 border border-red-300 rounded">
+          <div className="mb-4 p-4 bg-red-100 text-red-800 border border-red-300 rounded-sm">
             {errorMessage}
           </div>
         )}
@@ -110,7 +110,7 @@ export default function BlogPage({
               open={showDeleteDialog}
               onClose={() => setShowDeleteDialog(false)}
             >
-              <DialogBackdrop className="fixed inset-0 bg-black/15 backdrop-blur-sm" />
+              <DialogBackdrop className="fixed inset-0 bg-black/15 backdrop-blur-xs" />
               <div className="fixed inset-0 flex items-center justify-center p-4">
                 <DialogPanel className="w-full max-w-md overflow-hidden rounded-lg bg-white shadow-lg border border-gray-300">
                   {/* Header */}
@@ -138,7 +138,7 @@ export default function BlogPage({
                   <div className="px-6 py-4 flex justify-end gap-4 bg-gray-50">
                     <button
                       onClick={() => setShowDeleteDialog(false)}
-                      className="px-4 py-2 rounded border text-gray-700 hover:bg-gray-100"
+                      className="px-4 py-2 rounded-sm border text-gray-700 hover:bg-gray-100"
                     >
                       Cancel
                     </button>
@@ -148,7 +148,7 @@ export default function BlogPage({
                         setShowDeleteDialog(false);
                         router.back();
                       }}
-                      className="px-4 py-2 flex items-center gap-2 rounded bg-red-600 text-white hover:bg-red-700"
+                      className="px-4 py-2 flex items-center gap-2 rounded-sm bg-red-600 text-white hover:bg-red-700"
                     >
                       <AlertTriangle size={16} />
                       Delete
@@ -232,7 +232,7 @@ export default function BlogPage({
         {editing && (
           <input
             value={newTag}
-            className="mt-2 focus:ring-0 focus:border-none focus:outline-none"
+            className="mt-2 focus:ring-0 focus:border-none focus:outline-hidden"
             type="text"
             placeholder="Add tag"
             onChange={(e) => {

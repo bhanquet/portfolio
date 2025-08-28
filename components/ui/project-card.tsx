@@ -44,20 +44,20 @@ export default function ProjectCard({
             className="object-cover w-full h-64"
           />
         ) : (
-          <div className="w-full h-64 relative bg-gradient-to-tr from-violet-400 via-indigo-200 to-red-50 overflow-hidden rounded-2xl" />
+          <div className="w-full h-64 relative bg-linear-to-tr from-violet-400 via-indigo-200 to-red-50 overflow-hidden rounded-2xl" />
 
 
         )}
 
         {/* Title */}
-        <div className="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/70 via-black/40 to-transparent">
+        <div className="absolute bottom-0 left-0 w-full p-4 bg-linear-to-t from-black/70 via-black/40 to-transparent">
           <h3 className="text-lg font-semibold text-white">{title}</h3>
         </div>
 
         {/* Summary */}
         <motion.div
           variants={overlayVariants}
-          className="absolute bottom-0 left-0 w-full h-full p-4 text-white flex items-end bg-gradient-to-t from-black/90 to-black/40"
+          className="absolute bottom-0 left-0 w-full h-full p-4 text-white flex items-end bg-linear-to-t from-black/90 to-black/40"
         >
           <p className="text-sm">{summary}</p>
         </motion.div>

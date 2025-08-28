@@ -13,7 +13,7 @@ export default async function Layout({
     <>
       <div className="bg-background2 min-h-screen flex flex-col">
         <Header />
-        <div className="flex-grow">{children}</div>
+        <div className="grow">{children}</div>
       </div>
       {session && (
         <div className="group fixed bottom-4 right-4">

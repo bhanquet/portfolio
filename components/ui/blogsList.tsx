@@ -49,11 +49,11 @@ export function BlogList({ blogs }: { blogs: Blog[] }) {
 
                 {/* Image */}
                 {blog.imagePath && (
-                  <div className="hidden md:block w-1/4 aspect-[4/3] relative mr-6">
+                  <div className="hidden md:block w-1/4 aspect-4/3 relative mr-6">
                     <Image
                       src={blog.imagePath}
                       alt={blog.title}
-                      className="object-cover rounded-xl shadow border"
+                      className="object-cover rounded-xl shadow-sm border"
                       fill={true}
                     />
                   </div>

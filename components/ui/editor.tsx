@@ -115,7 +115,7 @@ export default function TipTapEditor({
     immediatelyRender: false,
     editorProps: {
       attributes: {
-        class: "prose focus:outline-none",
+        class: "prose focus:outline-hidden",
       },
       handleDrop(view, event) {
         const files = event.dataTransfer?.files;
@@ -211,7 +211,7 @@ function BubbleButton({
 }) {
   return (
     <button
-      className={`px-1 py-1 m-[3px] rounded outline-1 outline-slate-200 hover:outline ${isStyleActive(editor, style) ? "text-strongcolor " : ""}`}
+      className={`px-1 py-1 m-[3px] rounded-sm outline-1 outline-slate-200 hover:outline-solid ${isStyleActive(editor, style) ? "text-strongcolor " : ""}`}
       onClick={() => {
         toggleStyle(style, editor);
       }}

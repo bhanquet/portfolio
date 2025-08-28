@@ -31,7 +31,7 @@ export default function Search() {
       animate={{ opacity: 1, y: 0, scale: focused ? 1.02 : 1 }}
     >
       <Input
-        className="hover:shadow-lg focus:shadow-lg"
+        className="hover:shadow-lg focus:shadow-lg bg-white"
         autoComplete="off"
         placeholder="Search..."
         onChange={(e) => {

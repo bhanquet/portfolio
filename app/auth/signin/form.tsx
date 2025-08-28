@@ -8,7 +8,7 @@ export default function SignInForm() {
   return (
     <form
       action={action}
-      className="max-w-sm mx-auto mt-10 p-4 border rounded shadow"
+      className="max-w-sm mx-auto mt-10 p-4 border rounded-sm shadow-sm"
     >
       <h2 className="text-maintext text-xl font-semibold mb-4">Login</h2>
       <div className="mb-3">
@@ -19,7 +19,7 @@ export default function SignInForm() {
           type="email"
           name="email"
           id="email"
-          className="w-full border px-3 py-2 rounded mt-1"
+          className="w-full border px-3 py-2 rounded-sm mt-1"
           required
         />
       </div>
@@ -31,7 +31,7 @@ export default function SignInForm() {
           type="password"
           name="password"
           id="password"
-          className="w-full border px-3 py-2 rounded mt-1"
+          className="w-full border px-3 py-2 rounded-sm mt-1"
           required
         />
       </div>
@@ -39,7 +39,7 @@ export default function SignInForm() {
       <button
         disabled={pending}
         type="submit"
-        className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+        className="w-full bg-blue-600 text-white py-2 rounded-sm hover:bg-blue-700 transition"
       >
         Log In
       </button>
