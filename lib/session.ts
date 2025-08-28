@@ -91,7 +91,7 @@ export async function decrypt(token: string): Promise<SessionData | null> {
       algorithms: ["HS256"],
     });
     return payload as SessionData;
-  } catch (error) {
+  } catch {
     return null;
   }
 }

@@ -6,6 +6,7 @@ import { slugify } from "@/lib/utils";
 import { Blog } from "@/lib/definitions";
 import { getSession } from "@/lib/session";
 import { JSDOM } from "jsdom";
+import { MongoServerError } from "mongodb";
 
 const blogValidation = z.object({
   title: z.string(),
@@ -49,7 +50,7 @@ export async function saveBlog(blog: Blog): Promise<Blog | { error: string }> {
 
   try {
     const db = await getDB();
-    let blogs = db.collection("blogs");
+    const blogs = db.collection("blogs");
     await blogs.updateOne(
       { slug: oldSlug },
       { $set: result.data },
@@ -57,8 +58,8 @@ export async function saveBlog(blog: Blog): Promise<Blog | { error: string }> {
     );
 
     return result.data;
-  } catch (error: any) {
-    if (error.code === 11000) {
+  } catch (error) {
+    if (error instanceof MongoServerError && error.code === 11000) {
       return { error: `A blog with the slug "${blog.slug}" already exists.` };
     }
 
@@ -94,7 +95,7 @@ function extractSummaryFromHTML(html: string, maxLength: number = 500): string {
   const dom = new JSDOM(html);
   const paragraphs = dom.window.document.querySelectorAll("p");
 
-  let summaryParts: string[] = [];
+  const summaryParts: string[] = [];
   let currentLength = 0;
 
   for (const p of paragraphs) {

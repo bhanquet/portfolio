@@ -1,5 +1,6 @@
 import { ImagePlus, Loader2, Trash } from "lucide-react";
 import { useRef } from "react";
+import Image from "next/image";
 
 export default function ImageUploader({
   imagePath,
@@ -50,12 +51,13 @@ export default function ImageUploader({
 
       {/* Image Preview */}
       {imagePath && (
-        <div className="relative mt-2 group rounded-lg overflow-hidden shadow-md border border-gray-200">
-          <img
+        <div className="relative h-64 mt-2 group rounded-lg overflow-hidden shadow-md border border-gray-200">
+          <Image
             src={imagePath}
             alt="Uploaded"
-            className="w-full h-64 object-cover"
-          />
+            className="object-cover"
+            fill
+          ></Image>
           <button
             className="absolute top-2 right-2 bg-white/80 rounded-full p-1 hover:bg-white transition"
             onClick={() => {

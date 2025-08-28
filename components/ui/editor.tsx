@@ -39,7 +39,7 @@ export default function TipTapEditor({
           autolink: true,
           defaultProtocol: "https",
           protocols: ["http", "https"],
-          isAllowedUri: (url, ctx) => {
+          isAllowedUri: (url: string, ctx) => {
             try {
               // construct URL
               const parsedUrl = url.includes(":")
@@ -85,7 +85,7 @@ export default function TipTapEditor({
               return false;
             }
           },
-          shouldAutoLink: (url) => {
+          shouldAutoLink: (url: string) => {
             try {
               // construct URL
               const parsedUrl = url.includes(":")
@@ -222,11 +222,12 @@ function BubbleButton({
 }
 
 type Level = 1 | 2 | 3;
+type SimpleStyle = "bold" | "italic" | "strike" | "code";
 
 function isStyleActive(editor: Editor, style: Style): boolean {
   const simpleStyles = ["bold", "italic", "strike", "code"] as const;
 
-  if (simpleStyles.includes(style as any)) {
+  if (simpleStyles.includes(style as SimpleStyle)) {
     return editor.isActive(style);
   }
 

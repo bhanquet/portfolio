@@ -7,14 +7,14 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 export default function Pagination({ totalPages }: { totalPages: number }) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
   if (totalPages <= 1) {
     return null; // No pagination needed if there's only one page
   }
 
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
   const currentPage = Number(searchParams.get("page")) || 1;
-
   const createPageURL = (pageNumber: number | string) => {
     const params = new URLSearchParams(searchParams);
 

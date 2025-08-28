@@ -38,7 +38,7 @@ export async function uploadImage(
     // Return the path to the uploaded image
     const publicPath = `/images/${randomName}`;
     return { path: publicPath };
-  } catch (error: any) {
+  } catch (error) {
     console.error("Image upload error:", error);
     return { error: "Failed to upload image." };
   }
@@ -61,7 +61,7 @@ export async function deleteImage(
   try {
     await fs.unlink(fullPath);
     return { success: true };
-  } catch (error: any) {
+  } catch (error) {
     console.error("Image delete error:", error);
     return { success: false, error: "Failed to delete image." };
   }
