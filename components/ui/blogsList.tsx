@@ -26,7 +26,7 @@ export function BlogList({ blogs }: { blogs: Blog[] }) {
             exit={{ opacity: 0, y: 20, transition: { duration: 0.2 } }}
             whileHover={{ scale: 1.02 }}
           >
-            <Link href={`blog/${blog.slug}`} className="block">
+            <Link href={`/blog/${blog.slug}`} className="block">
               <Card className="mt-5 p-8 flex flex-col md:flex-row gap-7 cursor-pointer hover:shadow-xl transition-shadow">
                 {/* Text */}
                 <div className="flex-1">
