@@ -4,6 +4,9 @@ import { fetchAllBlogs, fetchBlog } from "@/lib/data";
 import { notFound } from "next/navigation";
 import Blog from "@/components/shared/blog";
 import { Blog as BlogType } from "@/lib/definitions";
+import Image from "next/image";
+import Tags from "@/components/ui/tags";
+import { BlogDate } from "@/components/ui/blogDate";
 
 export const revalidate = 300; // Revalidate this page every 5 minutes
 
@@ -32,7 +35,48 @@ export default async function Page({
 
   return (
     <div className="bg-white p-5 pb-32 rounded-md">
-      <Blog blog={blog} canEdit={false} edit={false} />
+      <div className="max-w-3xl mx-auto mt-8">
+        {/* Title */}
+        <h1 key="titleDisplay" className="text-5xl font-bold">
+          {blog.title}
+        </h1>
+
+        {/* Image */}
+        {blog.imagePath ? (
+          <div className="mt-2 rounded-lg overflow-hidden shadow-md border border-gray-200 relative h-64">
+            <Image
+              src={blog.imagePath}
+              alt="Blog cover"
+              className="object-cover"
+              fill={true}
+            />
+          </div>
+        ) : null}
+
+        {/* Tags */}
+        {Array.isArray(blog.tags) && blog.tags.length > 0 && (
+          <div className="mt-4">
+            <Tags tags={blog.tags} />
+          </div>
+        )}
+
+        {/* Date */}
+        <p className="mt-4 italic text-gray-600">
+          Created on <BlogDate date={blog.createdDate} />
+          {"editedDate" in blog && blog.editedDate && (
+            <span>
+              , edited on <BlogDate date={blog.editedDate} />
+            </span>
+          )}
+        </p>
+
+        {/* Blog content */}
+        <div
+          key="preview"
+          className="prose mt-6"
+          dangerouslySetInnerHTML={{ __html: blog.content }}
+        />
+      </div>
     </div>
   );
 }

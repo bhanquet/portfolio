@@ -1,5 +1,4 @@
 import Button from "@/components/ui/button";
-import { getSession } from "@/lib/session";
 import { fetchAllTags, fetchBlogs, fetchBlogsCount } from "@/lib/data";
 import { Blog } from "@/lib/definitions";
 import Search from "@/components/ui/search";
@@ -10,8 +9,6 @@ import { BlogList } from "@/components/ui/blogsList";
 export default async function Page(props: {
   searchParams?: Promise<{ search?: string; page?: number }>;
 }) {
-  const session = await getSession();
-
   const searchParams = await props.searchParams;
   const search = searchParams?.search || "";
   const page = searchParams?.page || 1;
@@ -42,18 +39,6 @@ export default async function Page(props: {
           </ul>
         </aside>
         <div className="w-full max-w-5xl">
-          {session && (
-            <>
-              <div className="mb-4 flex">
-                <Button href="/blog/new-blog">
-                  <div className="flex items-center gap-2">
-                    <Plus />
-                    New post
-                  </div>
-                </Button>
-              </div>
-            </>
-          )}
           <Search />
 
           <BlogList blogs={blogs} />

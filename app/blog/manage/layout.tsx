@@ -1,28 +1,21 @@
-import Blog from "@/components/shared/blog";
-import { LogOut } from "lucide-react";
-
-import { getSession } from "@/lib/session";
 import { signout } from "@/actions/auth";
+import { getSession } from "@/lib/session";
+import { LogOut } from "lucide-react";
 import { notFound } from "next/navigation";
 
-export default async function Page({}) {
+export default async function Layout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const session = await getSession();
-  if (session?.userRole !== "admin") {
+  if (!session) {
     return notFound();
   }
 
-  const blog = {
-    title: "New Page",
-    slug: "new-page",
-    createdDate: new Date(),
-    tags: [],
-    summary: "",
-    content: "",
-  };
-
   return (
     <>
-      <Blog blog={blog} canEdit={session?.userRole === "admin"} edit={true} />
+      {children}
 
       {session && (
         <div className="group fixed bottom-4 right-4">

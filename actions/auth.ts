@@ -26,7 +26,7 @@ export async function signin(_: FormState, formData: FormData) {
         userName: "Brian",
         userRole: "admin",
       });
-      redirect("/blog");
+      redirect("/blog/manage");
     }
   }
   return { error: "Wrong login/password" };
