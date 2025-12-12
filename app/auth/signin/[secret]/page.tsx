@@ -15,7 +15,7 @@ export default async function SignInPage({
 
   const session = await getSession();
   if (session) {
-    redirect("/blog");
+    redirect("/blog/manage");
   }
 
   return <SignInForm />;

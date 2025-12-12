@@ -2,7 +2,6 @@ import { JSDOM } from "jsdom";
 import DOMPurify from "dompurify";
 import { fetchAllBlogs, fetchBlog } from "@/lib/data";
 import { notFound } from "next/navigation";
-import Blog from "@/components/shared/blog";
 import { Blog as BlogType } from "@/lib/definitions";
 import Image from "next/image";
 import Tags from "@/components/ui/tags";

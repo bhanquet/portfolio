@@ -7,6 +7,7 @@ import { Blog } from "@/lib/definitions";
 import { getSession } from "@/lib/session";
 import { JSDOM } from "jsdom";
 import { MongoServerError } from "mongodb";
+import { revalidatePath } from "next/cache";
 
 const blogValidation = z.object({
   title: z.string(),
@@ -57,6 +58,8 @@ export async function saveBlog(blog: Blog): Promise<Blog | { error: string }> {
       { upsert: true },
     );
 
+    revalidatePath("/blog");
+
     return result.data;
   } catch (error) {
     if (error instanceof MongoServerError && error.code === 11000) {
@@ -82,6 +85,7 @@ export async function deleteBlog(
     const result = await blogs.deleteOne({ slug: slug });
 
     if (result.deletedCount === 1) {
+      revalidatePath("/blog");
       return { sucess: true };
     }
   } catch {

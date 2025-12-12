@@ -4,7 +4,7 @@ import { Blog } from "@/lib/definitions";
 import Search from "@/components/ui/search";
 import Pagination from "@/components/ui/pagination";
 import { Plus } from "lucide-react";
-import { BlogList } from "@/components/ui/blogsList";
+import { BlogManagementTable } from "@/components/ui/blogsManagementTable";
 
 export default async function Page(props: {
   searchParams?: Promise<{ search?: string; page?: number }>;
@@ -34,7 +34,7 @@ export default async function Page(props: {
         </div>
         <Search />
 
-        <BlogList blogs={blogs} />
+        <BlogManagementTable blogs={blogs} />
 
         <div className="mt-5">
           <Pagination totalPages={totalPages} />

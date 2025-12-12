@@ -1,4 +1,4 @@
-import Blog from "@/components/shared/blog";
+import BlogEdit from "@/components/shared/blogEdit";
 
 export default async function Page({}) {
   const blog = {
@@ -9,10 +9,5 @@ export default async function Page({}) {
     summary: "",
     content: "",
   };
-
-  return (
-    <>
-      <Blog blog={blog} canEdit={true} edit={true} />
-    </>
-  );
+  return <BlogEdit blog={blog} />;
 }
