@@ -45,7 +45,7 @@ export default async function Page(props: {
           {session && (
             <>
               <div className="mb-4 flex">
-                <Button href="/blog/new-page">
+                <Button href="/blog/new-blog">
                   <div className="flex items-center gap-2">
                     <Plus />
                     New post
