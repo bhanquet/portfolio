@@ -59,6 +59,15 @@ export async function fetchBlogsCount(
   return await db.collection<BlogDoc>("blogs").countDocuments(filter);
 }
 
+export async function fetchAllBlogs(): Promise<Blog[]> {
+  const db = await getDB();
+  const blogDoc = await db.collection<BlogDoc>("blogs").find().toArray();
+
+  const blogs: Blog[] = blogDoc.map(toBlog);
+
+  return blogs;
+}
+
 export async function fetchBlog(slug: string): Promise<Blog | null> {
   const db = await getDB();
   const blogDoc = await db.collection<BlogDoc>("blogs").findOne({ slug });
