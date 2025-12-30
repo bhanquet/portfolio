@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: `Brian Hanquet - ${blog ? blog.title : "Not Found"}`,
-    description: `Read the blog post titled "${blog?.title}" on my personal website.`,
+    description: blog ? blog.summary : "Blog post by Brian Hanquet",
   };
 }
 

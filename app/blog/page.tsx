@@ -1,10 +1,15 @@
-import Button from "@/components/ui/button";
 import { fetchAllTags, fetchBlogs, fetchBlogsCount } from "@/lib/data";
 import { Blog } from "@/lib/definitions";
 import Search from "@/components/ui/search";
 import Pagination from "@/components/ui/pagination";
-import { Plus } from "lucide-react";
 import { BlogList } from "@/components/ui/blogsList";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Brian Hanquet - Blog",
+  description:
+    "Dive into a world of tech, cars, electronics, and sim racing. Explore tutorials, tips, and insights from a passionate hobbyist.",
+};
 
 export default async function Page(props: {
   searchParams?: Promise<{ search?: string; page?: number }>;

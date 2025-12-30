@@ -10,7 +10,8 @@ const lexend = Lexend({
 
 export const metadata: Metadata = {
   title: "Brian Hanquet",
-  description: "Mon portfolio",
+  description:
+    "I create simple, fast, and beautiful websites that are easy to use.",
 };
 
 export default function RootLayout({
