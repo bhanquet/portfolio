@@ -18,6 +18,7 @@ import {
 import ImageUploader from "@/components/ui/imageUploader";
 import { deleteImage, uploadImage } from "@/actions/imageUploader";
 import TipTapEditor from "@/components/ui/editor";
+import Checkbox from "@/components/ui/form/checkbox";
 
 export default function Page({ blog }: { blog: BlogType }) {
   const [contentUpdated, setContentUpdated] = useState(false);
@@ -33,7 +34,7 @@ export default function Page({ blog }: { blog: BlogType }) {
     const handler = (event: BeforeUnloadEvent) => {
       event.preventDefault();
       // Setting returnValue is the trigger for the prompt
-      event.returnValue = ""; // A non-null value triggers the dialog
+      return ""; // A non-null value triggers the dialog
     };
 
     window.addEventListener("beforeunload", handler);
@@ -48,26 +49,38 @@ export default function Page({ blog }: { blog: BlogType }) {
             {errorMessage}
           </div>
         )}
+
+        <div className="mb-4"></div>
         <div className="mb-4 flex place-content-between gap-2">
-          <Button
-            key="saveButton"
-            onClick={async () => {
-              const result = await saveBlog(editingBlog);
+          <div className="flex gap-3">
+            <Button
+              key="saveButton"
+              onClick={async () => {
+                const result = await saveBlog(editingBlog);
 
-              setErrorMessage(null);
-              if ("error" in result) {
-                setErrorMessage(result.error);
-                return;
-              }
+                setErrorMessage(null);
+                if ("error" in result) {
+                  setErrorMessage(result.error);
+                  return;
+                }
 
-              setEditingBlog(result);
-              setContentUpdated(false);
-              /* TODO: Only redirect if slug has changed */
-              router.replace("/blog/manage/edit/" + result.slug);
-            }}
-          >
-            Save
-          </Button>
+                setEditingBlog(result);
+                setContentUpdated(false);
+                /* TODO: Only redirect if slug has changed */
+                router.replace("/blog/manage/edit/" + result.slug);
+              }}
+            >
+              Save
+            </Button>
+            <Checkbox
+              defaultChecked={blog.public}
+              label="Public ?"
+              onChange={(e) => {
+                setContentUpdated(true);
+                setEditingBlog({ ...editingBlog, public: e.target.checked });
+              }}
+            />
+          </div>
 
           {/* Delete */}
           <button

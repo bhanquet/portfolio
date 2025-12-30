@@ -13,12 +13,15 @@ export default async function Page(props: {
   const search = searchParams?.search || "";
   const page = searchParams?.page || 1;
   const maxItem = 10;
-  const totalPages = Math.ceil((await fetchBlogsCount(search)) / maxItem);
+  const totalPages = Math.ceil(
+    (await fetchBlogsCount(search, false)) / maxItem,
+  );
 
   const blogs: Blog[] = await fetchBlogs({
     searchQuery: search,
     maxItem,
     page,
+    publicOnly: false,
   });
 
   return (

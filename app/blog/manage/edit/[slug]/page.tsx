@@ -14,7 +14,7 @@ export default async function Page({
   const { slug } = await params;
 
   let blog: BlogType;
-  const fetchedBlog = await fetchBlog(slug);
+  const fetchedBlog = await fetchBlog(slug, false);
   if (!fetchedBlog) return notFound();
   blog = fetchedBlog;
 

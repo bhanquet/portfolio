@@ -12,6 +12,7 @@ interface BlogDoc {
   imagePath?: string;
   summary?: string;
   content?: string;
+  public?: boolean;
 }
 
 function toBlog(doc: BlogDoc): Blog {
@@ -24,6 +25,7 @@ function toBlog(doc: BlogDoc): Blog {
     imagePath: doc.imagePath || "",
     summary: doc.summary || "",
     content: doc.content || "",
+    public: doc.public || false,
   };
 }
 
@@ -31,14 +33,16 @@ export async function fetchBlogs({
   searchQuery = "",
   page = 1,
   maxItem = 10,
+  publicOnly = true,
 }: {
   searchQuery?: string | undefined;
   page?: number;
   maxItem?: number;
+  publicOnly?: boolean;
 }): Promise<Blog[]> {
   const db = await getDB();
 
-  const filter = buildSearchFilter(searchQuery);
+  const filter = buildSearchFilter(searchQuery, publicOnly);
 
   const blogsDoc = await db
     .collection<BlogDoc>("blogs")
@@ -52,34 +56,47 @@ export async function fetchBlogs({
 
 export async function fetchBlogsCount(
   searchQuery: string = "",
+  publicOnly: boolean = true,
 ): Promise<number> {
   const db = await getDB();
-  const filter = buildSearchFilter(searchQuery);
+  const filter = buildSearchFilter(searchQuery, publicOnly);
 
   return await db.collection<BlogDoc>("blogs").countDocuments(filter);
 }
 
-export async function fetchAllBlogs(): Promise<Blog[]> {
+export async function fetchAllBlogs(
+  publicOnly: boolean = true,
+): Promise<Blog[]> {
   const db = await getDB();
-  const blogDoc = await db.collection<BlogDoc>("blogs").find().toArray();
+  const filter = publicOnly ? { public: true } : {};
+  const blogDoc = await db.collection<BlogDoc>("blogs").find(filter).toArray();
 
   const blogs: Blog[] = blogDoc.map(toBlog);
 
   return blogs;
 }
 
-export async function fetchBlog(slug: string): Promise<Blog | null> {
+export async function fetchBlog(
+  slug: string,
+  publicOnly: boolean = true,
+): Promise<Blog | null> {
   const db = await getDB();
-  const blogDoc = await db.collection<BlogDoc>("blogs").findOne({ slug });
+  const filter: Filter<BlogDoc> = publicOnly
+    ? { slug, public: true }
+    : { slug };
+  const blogDoc = await db.collection<BlogDoc>("blogs").findOne(filter);
 
   if (!blogDoc) return null;
 
   return toBlog(blogDoc);
 }
 
-export async function fetchAllTags(): Promise<string[]> {
+export async function fetchAllTags(
+  publicOnly: boolean = true,
+): Promise<string[]> {
   const db = await getDB();
-  const blogsDoc = await db.collection<BlogDoc>("blogs").find().toArray();
+  const filter: Filter<BlogDoc> = publicOnly ? { public: true } : {};
+  const blogsDoc = await db.collection<BlogDoc>("blogs").find(filter).toArray();
 
   const tagsSet = new Set<string>();
   blogsDoc.forEach((blog) => {
@@ -91,11 +108,17 @@ export async function fetchAllTags(): Promise<string[]> {
   return Array.from(tagsSet);
 }
 
-export async function fetchBlogsByTag(tag: string): Promise<Blog[]> {
+export async function fetchBlogsByTag(
+  tag: string,
+  publicOnly: boolean = true,
+): Promise<Blog[]> {
   const db = await getDB();
+  const filter: Filter<BlogDoc> = publicOnly
+    ? { public: true, tags: { $in: [tag] } }
+    : { tags: { $in: [tag] } };
   const blogsDoc = await db
     .collection<BlogDoc>("blogs")
-    .find({ tags: { $in: [tag] } })
+    .find(filter)
     .sort({ createdDate: -1 })
     .toArray();
 
@@ -103,14 +126,27 @@ export async function fetchBlogsByTag(tag: string): Promise<Blog[]> {
 }
 
 // -- Helper functions
-function buildSearchFilter(query?: string): Filter<BlogDoc> {
-  if (!query) return {};
-  return {
-    $or: [
-      { title: { $regex: query, $options: "i" } },
-      { summary: { $regex: query, $options: "i" } },
-      { content: { $regex: query, $options: "i" } },
-      { tags: { $regex: query, $options: "i" } },
-    ],
-  };
+function buildSearchFilter(
+  query?: string,
+  publicOnly?: boolean,
+): Filter<BlogDoc> {
+  const search: Filter<BlogDoc> = !query
+    ? {}
+    : {
+        $or: [
+          { title: { $regex: query, $options: "i" } },
+          { summary: { $regex: query, $options: "i" } },
+          { content: { $regex: query, $options: "i" } },
+          { tags: { $elemMatch: { $regex: query, $options: "i" } } },
+        ],
+      };
+
+  const visibility: Filter<BlogDoc> = publicOnly ? { public: true } : {};
+
+  // Combine both; if one of them is empty, MongoDB treats {} in $and as no-op
+  if (Object.keys(search).length && Object.keys(visibility).length) {
+    return { $and: [search, visibility] };
+  }
+  // Return whichever is non-empty, or {} if both empty
+  return Object.keys(search).length ? search : visibility;
 }

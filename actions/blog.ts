@@ -27,6 +27,7 @@ const blogValidation = z.object({
     .string()
     .max(500, { message: "summary must be less then 500 characters" }),
   content: z.string(),
+  public: z.boolean().default(false),
 });
 
 export async function saveBlog(blog: Blog): Promise<Blog | { error: string }> {

@@ -19,4 +19,5 @@ export type Blog = {
   imagePath?: string | null;
   summary: string;
   content: string;
+  public?: boolean;
 };
