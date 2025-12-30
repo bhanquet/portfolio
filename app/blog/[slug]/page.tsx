@@ -6,6 +6,7 @@ import { Blog as BlogType } from "@/lib/definitions";
 import Image from "next/image";
 import Tags from "@/components/ui/tags";
 import { BlogDate } from "@/components/ui/blogDate";
+import type { Metadata } from "next";
 
 export const revalidate = 300; // Revalidate this page every 5 minutes
 
@@ -16,11 +17,21 @@ export async function generateStaticParams() {
   }));
 }
 
-export default async function Page({
-  params,
-}: {
+type Props = {
   params: Promise<{ slug: string }>;
-}) {
+};
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const blog = await fetchBlog(slug);
+
+  return {
+    title: `Brian Hanquet - ${blog ? blog.title : "Not Found"}`,
+    description: `Read the blog post titled "${blog?.title}" on my personal website.`,
+  };
+}
+
+export default async function Page({ params }: Props) {
   const { slug } = await params;
 
   let blog: BlogType;
