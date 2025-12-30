@@ -19,8 +19,10 @@ import ImageUploader from "@/components/ui/imageUploader";
 import { deleteImage, uploadImage } from "@/actions/imageUploader";
 import TipTapEditor from "@/components/ui/editor";
 import Checkbox from "@/components/ui/form/checkbox";
+import NotificationBanner from "@/components/ui/notificationBanner";
 
 export default function Page({ blog }: { blog: BlogType }) {
+  const [showSavedBanner, setShowSavedBanner] = useState(false);
   const [contentUpdated, setContentUpdated] = useState(false);
   const [editingBlog, setEditingBlog] = useState<Blog>(blog);
   const [isPending, startTransition] = useTransition();
@@ -43,6 +45,11 @@ export default function Page({ blog }: { blog: BlogType }) {
 
   return (
     <div>
+      <NotificationBanner
+        show={showSavedBanner}
+        message="Blog saved successfully!"
+        onCloseAction={() => setShowSavedBanner(false)}
+      />
       <div className="max-w-3xl mx-auto mt-8">
         {errorMessage && (
           <div className="mb-4 p-4 bg-red-100 text-red-800 border border-red-300 rounded-sm">
@@ -66,6 +73,7 @@ export default function Page({ blog }: { blog: BlogType }) {
 
                 setEditingBlog(result);
                 setContentUpdated(false);
+                setShowSavedBanner(true);
                 /* TODO: Only redirect if slug has changed */
                 router.replace("/blog/manage/edit/" + result.slug);
               }}
