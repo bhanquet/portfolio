@@ -6,8 +6,9 @@ const uri = process.env.MONGODB_URI;
 const dbName = process.env.MONGODB_DB || "portfolio";
 
 if (!uri) throw new Error("Missing MONGODB_URI");
+const mongoUri: string = uri;
 
-let client: MongoClient;
+let client: MongoClient | undefined;
 
 if (process.env.NODE_ENV === "development") {
   // In development mode, use a global variable so that the value
@@ -17,17 +18,16 @@ if (process.env.NODE_ENV === "development") {
   };
 
   if (!globalWithMongo._mongoClient) {
-    globalWithMongo._mongoClient = new MongoClient(uri);
+    globalWithMongo._mongoClient = new MongoClient(mongoUri);
   }
   client = globalWithMongo._mongoClient;
-} else {
-  // In production mode, it's best to not use a global variable.
-  client = new MongoClient(uri);
 }
 
 export async function getDB() {
-  const db = client.db(dbName);
-  if (!didSetup) setup(db);
+  const currentClient = client ?? new MongoClient(mongoUri);
+  await currentClient.connect();
+  const db = currentClient.db(dbName);
+  if (!didSetup) await setup(db);
 
   return db;
 }
