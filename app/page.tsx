@@ -1,4 +1,3 @@
-import Header from "@/components/shared/header";
 import Hero from "@/components/shared/hero";
 import AboutMe from "@/components/shared/aboutme";
 import Projects from "@/components/shared/projects";
@@ -6,23 +5,22 @@ import Contact from "@/components/shared/contact";
 
 export default function Home() {
   return (
-    <div className="scroll-smooth h-screen overflow-y-scroll">
-      <div className="snap-start bg-background min-h-screen flex flex-col">
-        <Header />
+    <div id="main-scroll" className="scroll-smooth h-[calc(100vh-68px)] overflow-y-scroll snap-y snap-mandatory">
+      <section className="snap-start min-h-screen flex flex-col bg-linear-to-br from-background via-background to-surface-2">
         <Hero />
-      </div>
+      </section>
       {/* About */}
-      <div className="snap-start">
+      <section className="snap-start min-h-screen flex flex-col justify-center">
         <AboutMe />
-      </div>
+      </section>
       {/* Projects */}
-      <div className="snap-start">
+      <section className="snap-start min-h-screen flex flex-col justify-center">
         <Projects />
-      </div>
+      </section>
       {/* Contact */}
-      <div className="snap-start">
-        <Contact />
-      </div>
+      <section className="snap-start min-h-screen flex flex-col justify-center">
+        <Contact email={process.env.MAIL_CONTACT} />
+      </section>
     </div>
   );
 }

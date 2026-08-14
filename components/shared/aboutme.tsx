@@ -6,7 +6,7 @@ import CV from "@/components/shared/aboutme_cv";
 
 export default function AboutMe() {
   return (
-    <div id="about" className="bg-background2 px-3 py-10 lg:py-24">
+    <div id="about" className="bg-surface-2 px-3 py-10 lg:py-24">
       <AboutMeInfos />
       {/* Social */}
       <div className="mt-24 flex flex-col lg:flex-row gap-3 justify-center">

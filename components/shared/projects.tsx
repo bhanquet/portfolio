@@ -8,15 +8,18 @@ export default async function Projects() {
   return (
     <div
       id="projects"
-      className="bg-background px-6 sm:px-12 py-24 flex flex-col items-center"
+      className="bg-linear-to-b from-surface-2 via-background to-background px-6 sm:px-12 py-24 flex flex-col items-center"
     >
-      <h3 className="mb-10 text-4xl">Projects</h3>
+      <h3 className="mb-10 text-4xl md:text-5xl font-bold text-text">
+        Projects
+        <span className="block mx-auto md:mx-0 mt-3 h-1 w-16 bg-accent rounded-full" />
+      </h3>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-12 xl:gap-24 w-full max-w-[1200px] mx-auto justify-items-center">
         {projects.map((project, index) => (
           <motion.div
             key={project.slug}
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{
               delay: index * 0.1,

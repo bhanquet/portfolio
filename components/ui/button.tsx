@@ -11,6 +11,7 @@ type ButtonProps = {
   onClick?: (
     event: React.MouseEvent<HTMLButtonElement>,
   ) => void | Promise<void>;
+  type?: "button" | "submit" | "reset";
 };
 
 export default function Button({
@@ -19,12 +20,14 @@ export default function Button({
   variant = "primary",
   className,
   onClick,
+  type = "button",
 }: ButtonProps) {
   const classes = clsx(
-    "rounded-md py-2 px-4 shadow-md inline-block transition-colors",
+    "rounded-md py-2 px-4 shadow-md inline-block transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50",
     {
-      "bg-strongcolor hover:bg-[#0c6da6] text-white": variant === "primary",
-      "bg-[#dedede] hover:bg-[#C9C9C9] text-black": variant !== "primary",
+      "bg-accent hover:bg-accent-dark text-white": variant === "primary",
+      "bg-muted hover:bg-surface-2 text-text border border-text/10":
+        variant !== "primary",
     },
     className,
   );
@@ -56,7 +59,7 @@ export default function Button({
   }
 
   return (
-    <button className={classes} onClick={onClick}>
+    <button className={classes} onClick={onClick} type={type}>
       {children}
     </button>
   );

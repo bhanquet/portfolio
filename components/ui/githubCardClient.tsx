@@ -27,7 +27,7 @@ export default function GithubCardClient({ user }: { user: githubApi }) {
             <GithubIcon size={24} />
           </p>
           <p className="text-xl">{user.name || user.login}</p>
-          <p className="mb-4 text-sm text-secondarytext">{user.login}</p>
+          <p className="mb-4 text-sm text-text-muted">{user.login}</p>
           <Button href={user.html_url || "#"}>Github</Button>
         </div>
         <div>

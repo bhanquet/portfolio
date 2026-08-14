@@ -29,7 +29,7 @@ export default async function Page(props: {
 
   return (
     <>
-      <div className="mx-auto flex">
+      <div className="mx-auto flex mt-12">
         <aside className="hidden lg:block w-1/4 px-6">
           <p className="mb-3 text-gray-700 text-lg font-semibold">Tags</p>
           <ul>

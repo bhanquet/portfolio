@@ -3,11 +3,21 @@
 @plugin '@tailwindcss/typography';
 
 @theme {
-  --color-background2: #f7f7f7;
-  --color-background: #fff7ef;
-  --color-strongcolor: #0e7ebd;
-  --color-maintext: #060c12;
-  --color-secondarytext: #4e4946;
+  /* Core palette */
+  --color-background: #f8f6f2;
+  --color-surface: #ffffff;
+  --color-surface-2: #eeede9;
+  --color-text: #101827;
+  --color-text-muted: #5e5b55;
+  --color-accent: #0e7ebd;
+  --color-accent-dark: #0c6da6;
+  --color-muted: #e0ddd6;
+
+  /* Legacy aliases kept for existing blog / admin pages */
+  --color-background2: var(--color-surface-2);
+  --color-strongcolor: var(--color-accent);
+  --color-maintext: var(--color-text);
+  --color-secondarytext: var(--color-text-muted);
 }
 
 /*

@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Lexend } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 import Script from "next/script";
+import Header from "@/components/shared/header";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -21,7 +23,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${lexend.className} text-maintext antialiased`}>
+      <body className={`${lexend.className} text-text antialiased bg-background pt-[68px]`}>
+        <Suspense fallback={null}>
+          <Header />
+        </Suspense>
         {children}
       </body>
       <Script src="https://scripts.simpleanalyticscdn.com/latest.js" />

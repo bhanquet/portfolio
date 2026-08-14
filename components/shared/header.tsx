@@ -2,8 +2,9 @@
 
 import { Nunito } from "next/font/google";
 import Link, { LinkProps } from "next/link";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { motion } from "motion/react";
 
 const nunito = Nunito({
   subsets: ["latin"],
@@ -18,7 +19,11 @@ function NavLink({ children, isActive = false, ...props }: NavLinkProps) {
   return (
     <div>
       <Link
-        className={`${isActive ? "font-extrabold" : "hover:font-semibold"}`}
+        className={`transition-colors ${
+          isActive
+            ? "font-extrabold text-accent"
+            : "text-text hover:text-accent hover:font-semibold"
+        }`}
         {...props}
       >
         {children}
@@ -29,6 +34,31 @@ function NavLink({ children, isActive = false, ...props }: NavLinkProps) {
 
 export default function Header() {
   const pathname = usePathname();
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const scrollContainer = document.getElementById("main-scroll");
+
+    const getScrolled = () => {
+      if (scrollContainer) {
+        return scrollContainer.scrollTop > 8;
+      }
+      return (
+        window.scrollY > 8 ||
+        document.documentElement.scrollTop > 8 ||
+        document.body.scrollTop > 8
+      );
+    };
+
+    const onScroll = () => setScrolled(getScrolled());
+
+    const target = scrollContainer ?? window;
+    target.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
+    return () => target.removeEventListener("scroll", onScroll);
+  }, []);
+
   const links = [
     { label: "Home", href: "/" },
     { label: "Projects", href: "/#projects" },
@@ -37,9 +67,18 @@ export default function Header() {
   ];
 
   return (
-    <header className="px-4 py-4 md:px-20 md:py-5">
-      <nav
-        className={`${nunito.className} flex mx-auto md:mr-0 justify-between max-w-sm text-lg`}
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 px-6 sm:px-12 lg:px-24 py-4 md:py-5 transition-all duration-300 ${
+        scrolled
+          ? "bg-background/80 backdrop-blur-md shadow-sm border-b border-text/5"
+          : "bg-transparent"
+      }`}
+    >
+      <motion.nav
+        className={`${nunito.className} flex mx-auto justify-between max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] text-lg`}
+        initial={{ opacity: 0, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
       >
         {links.map((link, key) => (
           <NavLink
@@ -50,7 +89,7 @@ export default function Header() {
             {link.label}
           </NavLink>
         ))}
-      </nav>
+      </motion.nav>
     </header>
   );
 }

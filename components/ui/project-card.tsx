@@ -44,7 +44,7 @@ export default function ProjectCard({
             className="object-cover w-full h-64"
           />
         ) : (
-          <div className="w-full h-64 relative bg-linear-to-tr from-violet-400 via-indigo-200 to-red-50 overflow-hidden rounded-2xl" />
+          <div className="w-full h-64 relative bg-linear-to-tr from-accent/30 via-accent/10 to-background overflow-hidden rounded-2xl" />
 
 
         )}
