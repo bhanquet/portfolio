@@ -1,5 +1,3 @@
-import Header from "@/components/shared/header";
-
 export default async function Layout({
   children,
 }: {
@@ -7,8 +5,7 @@ export default async function Layout({
 }) {
   return (
     <>
-      <div className="bg-background2 min-h-screen flex flex-col">
-        <Header />
+      <div className="bg-background2 min-h-[calc(100vh-68px)] flex flex-col">
         <div className="grow">{children}</div>
       </div>
     </>
