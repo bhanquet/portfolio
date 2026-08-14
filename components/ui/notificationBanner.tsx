@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import clsx from "clsx";
 
 export default function NotificationBanner({
@@ -24,17 +24,12 @@ export default function NotificationBanner({
   /** Optional style variant */
   variant?: "success" | "info" | "warning" | "error";
 }) {
-  const [visible, setVisible] = useState(show);
-
   useEffect(() => {
-    setVisible(show);
-    if (show) {
-      const id = setTimeout(() => {
-        setVisible(false);
-        onCloseAction?.(); // ← same semantics as your old onHide
-      }, duration);
-      return () => clearTimeout(id);
-    }
+    if (!show) return;
+    const id = setTimeout(() => {
+      onCloseAction?.();
+    }, duration);
+    return () => clearTimeout(id);
   }, [show, duration, onCloseAction]);
 
   const palette: Record<NonNullable<typeof variant>, { container: string }> = {
@@ -58,7 +53,7 @@ export default function NotificationBanner({
         "fixed top-0 left-0 right-0 z-50 flex justify-center",
         "pointer-events-none",
         "transition-all duration-200",
-        visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2",
+        show ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2",
       )}
       aria-live="polite"
       aria-atomic="true"

@@ -1,5 +1,4 @@
-import { JSDOM } from "jsdom";
-import DOMPurify from "dompurify";
+import { sanitizeHtml } from "@/lib/sanitize";
 import { fetchAllBlogs, fetchBlog } from "@/lib/data";
 import { notFound } from "next/navigation";
 import { Blog as BlogType } from "@/lib/definitions";
@@ -11,10 +10,18 @@ import type { Metadata } from "next";
 export const revalidate = 300; // Revalidate this page every 5 minutes
 
 export async function generateStaticParams() {
-  const blogs = await fetchAllBlogs();
-  return blogs.map((blog) => ({
-    slug: blog.slug,
-  }));
+  try {
+    const blogs = await fetchAllBlogs();
+    return blogs.map((blog) => ({
+      slug: blog.slug,
+    }));
+  } catch (error) {
+    console.warn(
+      "Failed to fetch blogs for static generation, falling back to dynamic rendering:",
+      error,
+    );
+    return [];
+  }
 }
 
 type Props = {
@@ -39,9 +46,7 @@ export default async function Page({ params }: Props) {
   if (!fetchedBlog) return notFound();
   blog = fetchedBlog;
 
-  const window = new JSDOM("").window;
-  const purify = DOMPurify(window);
-  blog.content = purify.sanitize(blog.content);
+  blog.content = sanitizeHtml(blog.content);
 
   return (
     <div className="bg-white p-5 pb-32 rounded-md">

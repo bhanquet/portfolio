@@ -8,9 +8,10 @@ import { getSession } from "@/lib/session";
 import { JSDOM } from "jsdom";
 import { MongoServerError } from "mongodb";
 import { revalidatePath } from "next/cache";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 const blogValidation = z.object({
-  title: z.string(),
+  title: z.string().min(1).max(200),
   slug: z.string().refine((val) => val !== "new-page", {
     message: "Url cannot be 'new-page'",
   }),
@@ -26,7 +27,7 @@ const blogValidation = z.object({
   summary: z
     .string()
     .max(500, { message: "summary must be less then 500 characters" }),
-  content: z.string(),
+  content: z.string().max(1_000_000, { message: "Content is too large" }),
   public: z.boolean().default(false),
 });
 
@@ -40,6 +41,7 @@ export async function saveBlog(blog: Blog): Promise<Blog | { error: string }> {
   blog.slug = slugify(blog.title);
   blog.editedDate = oldSlug === "new-page" ? null : new Date();
   blog.tags = blog.tags?.map((tag) => tag.toLowerCase()) || [];
+  blog.content = sanitizeHtml(blog.content);
   blog.summary = extractSummaryFromHTML(blog.content, 200);
 
   const result = blogValidation.safeParse(blog);

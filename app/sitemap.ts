@@ -2,12 +2,11 @@
 import type { MetadataRoute } from "next";
 import { fetchAllBlogs } from "@/lib/data"; // adjust to where your functions live
 
-const BASE_URL = "https://" + process.env.DOMAIN || "https://example.com";
+const BASE_URL = process.env.DOMAIN
+  ? `https://${process.env.DOMAIN}`
+  : "https://example.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  // Fetch only public blogs
-  const blogs = await fetchAllBlogs(true);
-
   // Static routes on your site (add/remove as needed)
   const staticRoutes: MetadataRoute.Sitemap = [
     {
@@ -25,13 +24,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // add other static pages like /about, /contact, etc.
   ];
 
-  // Dynamic blog routes
-  const blogRoutes: MetadataRoute.Sitemap = blogs.map((blog) => ({
-    url: `${BASE_URL}/blog/${blog.slug}`,
-    lastModified: blog.editedDate ?? blog.createdDate,
-    changeFrequency: "monthly",
-    priority: 0.8,
-  }));
+  let blogRoutes: MetadataRoute.Sitemap = [];
+
+  try {
+    // Fetch only public blogs
+    const blogs = await fetchAllBlogs(true);
+
+    // Dynamic blog routes
+    blogRoutes = blogs.map((blog) => ({
+      url: `${BASE_URL}/blog/${blog.slug}`,
+      lastModified: blog.editedDate ?? blog.createdDate,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    }));
+  } catch (error) {
+    console.warn("Failed to fetch blogs for sitemap:", error);
+  }
 
   return [...staticRoutes, ...blogRoutes];
 }

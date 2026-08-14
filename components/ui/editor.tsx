@@ -15,6 +15,8 @@ import { Italic } from "lucide-react";
 import { Strikethrough } from "lucide-react";
 import { Code } from "lucide-react";
 
+const MAX_BASE64_IMAGE_SIZE = 2 * 1024 * 1024; // 2 MB
+
 export default function TipTapEditor({
   editorContent,
   onChangeAction: onEditorChange,
@@ -126,6 +128,11 @@ export default function TipTapEditor({
         const file = files[0];
         if (!file.type.startsWith("image/")) {
           return false; // Only handle image files
+        }
+
+        if (file.size > MAX_BASE64_IMAGE_SIZE) {
+          // Refuse oversized images to keep HTML size reasonable
+          return false;
         }
 
         const reader = new FileReader();

@@ -1,33 +1,100 @@
+"use client";
+
+import { useActionState, useEffect } from "react";
+import { motion } from "motion/react";
 import Button from "../ui/button";
 import Input from "../ui/form/input";
 import Textarea from "../ui/form/textarea";
+import { sendContactEmail } from "@/actions/contact";
 
-export default function Contact() {
+interface ContactProps {
+  email?: string;
+}
+
+export default function Contact({ email }: ContactProps) {
+  const [state, formAction, isPending] = useActionState(sendContactEmail, null);
+
+  useEffect(() => {
+    if (state?.success) {
+      const form = document.getElementById("contact-form") as HTMLFormElement;
+      form?.reset();
+    }
+  }, [state]);
+
   return (
-    <div id="contact" className="bg-background2 p-4 lg:p-14">
-      <div className="bg-white max-w-3xl mx-auto rounded-md shadow-lg p-4 lg:p-10">
-        <h3 className="text-4xl mb-6">Contact</h3>
+    <motion.div
+      id="contact"
+      className="bg-linear-to-b from-background via-surface-2 to-surface-2 p-4 lg:p-14"
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      viewport={{ once: true }}
+    >
+      <div className="bg-surface max-w-3xl mx-auto rounded-md shadow-lg p-4 lg:p-10">
+        <h3 className="text-4xl md:text-5xl font-bold text-text mb-6">
+          Contact
+          <span className="block mt-3 h-1 w-16 bg-accent rounded-full" />
+        </h3>
         <p>
           You can contact me at{" "}
           <a
-            className="text-strongcolor"
-            href={`mailto:${process.env.MAIL_CONTACT}`}
+            className="text-accent hover:text-accent-dark transition-colors"
+            href={`mailto:${email}`}
           >
-            {process.env.MAIL_CONTACT}
+            {email}
           </a>
         </p>
-        <form>
+
+        {state?.success && (
+          <div className="mb-4 p-3 bg-green-100 text-green-800 rounded-md">
+            Your message has been sent successfully.
+          </div>
+        )}
+        {state?.error && (
+          <div className="mb-4 p-3 bg-red-100 text-red-800 rounded-md">
+            {state.error}
+          </div>
+        )}
+
+        <form id="contact-form" action={formAction}>
           <div className="grid grid-cols-2 gap-4">
-            <Input type="text" placeholder="Firstname" />
-            <Input type="text" placeholder="Lastname" />
-            <Input className="col-span-2" type="email" placeholder="Email" />
-            <Textarea className="col-span-2" placeholder="Message" />
+            <Input
+              name="firstName"
+              type="text"
+              placeholder="Firstname"
+              required
+              maxLength={50}
+            />
+            <Input
+              name="lastName"
+              type="text"
+              placeholder="Lastname"
+              required
+              maxLength={50}
+            />
+            <Input
+              name="email"
+              className="col-span-2"
+              type="email"
+              placeholder="Email"
+              required
+              maxLength={254}
+            />
+            <Textarea
+              name="message"
+              className="col-span-2"
+              placeholder="Message"
+              required
+              minLength={10}
+              maxLength={5000}
+              rows={6}
+            />
           </div>
           <div className="mt-4">
-            <Button>Send</Button>
+            <Button type="submit">{isPending ? "Sending..." : "Send"}</Button>
           </div>
         </form>
       </div>
-    </div>
+    </motion.div>
   );
 }

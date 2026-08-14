@@ -15,7 +15,12 @@ export default function CV() {
       <Card className="w-96 h-44 flex flex-col justify-between">
         <p className="mb-auto text-lg">My Curriculum Vitae</p>
         <div>
-          <Button>Download my CV</Button>
+          <Button
+            href={process.env.NEXT_PUBLIC_CV_URL || "/cv.pdf"}
+            variant="secondary"
+          >
+            Download my CV
+          </Button>
         </div>
       </Card>
     </motion.div>

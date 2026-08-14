@@ -1,5 +1,4 @@
-import { JSDOM } from "jsdom";
-import DOMPurify from "dompurify";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 import { fetchBlog } from "@/lib/data";
 import { notFound } from "next/navigation";
@@ -18,9 +17,7 @@ export default async function Page({
   if (!fetchedBlog) return notFound();
   blog = fetchedBlog;
 
-  const window = new JSDOM("").window;
-  const purify = DOMPurify(window);
-  blog.content = purify.sanitize(blog.content);
+  blog.content = sanitizeHtml(blog.content);
 
   return <BlogEdit blog={blog} />;
   // return "hi";

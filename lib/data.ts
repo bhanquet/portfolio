@@ -126,18 +126,34 @@ export async function fetchBlogsByTag(
 }
 
 // -- Helper functions
+
+/**
+ * Escapes characters that have a special meaning in regular expressions.
+ * Prevents ReDoS / regex injection when passing user input to MongoDB $regex.
+ */
+function escapeRegex(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function sanitizeSearchQuery(query?: string): string {
+  if (!query) return "";
+  return escapeRegex(query.trim().slice(0, 100));
+}
+
 function buildSearchFilter(
   query?: string,
   publicOnly?: boolean,
 ): Filter<BlogDoc> {
-  const search: Filter<BlogDoc> = !query
+  const sanitized = sanitizeSearchQuery(query);
+
+  const search: Filter<BlogDoc> = !sanitized
     ? {}
     : {
         $or: [
-          { title: { $regex: query, $options: "i" } },
-          { summary: { $regex: query, $options: "i" } },
-          { content: { $regex: query, $options: "i" } },
-          { tags: { $elemMatch: { $regex: query, $options: "i" } } },
+          { title: { $regex: sanitized, $options: "i" } },
+          { summary: { $regex: sanitized, $options: "i" } },
+          { content: { $regex: sanitized, $options: "i" } },
+          { tags: { $elemMatch: { $regex: sanitized, $options: "i" } } },
         ],
       };
 
