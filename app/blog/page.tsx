@@ -18,14 +18,17 @@ export default async function Page(props: {
   const search = searchParams?.search || "";
   const page = searchParams?.page || 1;
   const maxItem = 10;
-  const totalPages = Math.ceil((await fetchBlogsCount(search)) / maxItem);
 
-  const tags = await fetchAllTags();
-  const blogs: Blog[] = await fetchBlogs({
-    searchQuery: search,
-    maxItem,
-    page,
-  });
+  const [totalCount, tags, blogs] = await Promise.all([
+    fetchBlogsCount(search),
+    fetchAllTags(),
+    fetchBlogs({
+      searchQuery: search,
+      maxItem,
+      page,
+    }),
+  ]);
+  const totalPages = Math.ceil(totalCount / maxItem);
 
   return (
     <>
