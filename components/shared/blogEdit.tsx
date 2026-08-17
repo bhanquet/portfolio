@@ -13,6 +13,10 @@ import TipTapEditor from "@/components/ui/editor";
 import NotificationBanner from "@/components/ui/notificationBanner";
 import EditToolbar from "@/components/ui/editToolbar";
 import DeleteBlogDialog from "@/components/ui/deleteBlogDialog";
+import { slugify } from "@/lib/utils";
+import clsx from "clsx";
+
+const SUMMARY_RECOMMENDED_MAX = 200;
 
 export default function BlogEdit({ blog, isNew }: { blog: Blog; isNew: boolean }) {
   const router = useRouter();
@@ -25,6 +29,13 @@ export default function BlogEdit({ blog, isNew }: { blog: Blog; isNew: boolean }
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [toastError, setToastError] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isEditingSlug, setIsEditingSlug] = useState(false);
+  // Once the user edits the slug by hand it no longer mirrors the title.
+  const [slugTouched, setSlugTouched] = useState(false);
+
+  // The slug currently persisted in the database. The editor may hold a newer
+  // (unsaved) slug, so save/delete must reference this one to target the row.
+  const [savedSlug, setSavedSlug] = useState(blog.slug);
 
   // Tracks the most recently committed imagePath so concurrent uploads
   // (rapid double-select) can read the latest committed value instead of
@@ -38,8 +49,6 @@ export default function BlogEdit({ blog, isNew }: { blog: Blog; isNew: boolean }
     if (!contentUpdated) return;
     const handler = (event: BeforeUnloadEvent) => {
       event.preventDefault();
-      // Setting returnValue is the trigger for the prompt
-      return ""; // A non-null value triggers the dialog
     };
 
     window.addEventListener("beforeunload", handler);
@@ -55,7 +64,7 @@ export default function BlogEdit({ blog, isNew }: { blog: Blog; isNew: boolean }
     setIsSaving(true);
     setErrorMessage(null);
 
-    const result = await saveBlog(editingBlog, isNew);
+    const result = await saveBlog(editingBlog, isNew, savedSlug);
 
     setIsSaving(false);
     if ("error" in result) {
@@ -63,17 +72,19 @@ export default function BlogEdit({ blog, isNew }: { blog: Blog; isNew: boolean }
       return;
     }
 
+    const slugChanged = result.slug !== savedSlug;
+    setSavedSlug(result.slug);
     setEditingBlog(result);
     setContentUpdated(false);
     setShowSavedBanner(true);
-    if (result.slug !== editingBlog.slug) {
+    if (slugChanged) {
       // Avoid an unnecessary RSC roundtrip when the slug didn't change.
       router.replace("/blog/manage/edit/" + result.slug);
     }
   };
 
   const handleDelete = async () => {
-    await deleteBlog(editingBlog.slug);
+    await deleteBlog(savedSlug);
     setShowDeleteDialog(false);
     router.back();
   };
@@ -100,6 +111,9 @@ export default function BlogEdit({ blog, isNew }: { blog: Blog; isNew: boolean }
         dirty={contentUpdated}
         saving={isSaving}
         isPublic={editingBlog.public === true}
+        liveHref={
+          !isNew && editingBlog.public ? `/blog/${savedSlug}` : undefined
+        }
         onPublicChange={(value) => update({ public: value })}
         onSave={handleSave}
         onDelete={() => setShowDeleteDialog(true)}
@@ -126,9 +140,49 @@ export default function BlogEdit({ blog, isNew }: { blog: Blog; isNew: boolean }
           aria-label="Post title"
           placeholder="Post title"
           value={editingBlog.title ?? ""}
-          onChange={(e) => update({ title: e.target.value })}
+          onChange={(e) => {
+            const title = e.target.value;
+            // The slug follows the title until it is edited manually.
+            update(slugTouched ? { title } : { title, slug: slugify(title) });
+          }}
           className="w-full border-b border-transparent bg-transparent pb-2 text-4xl font-bold tracking-tight transition-colors placeholder:text-text/25 focus:border-muted focus:outline-none md:text-5xl"
         />
+
+        <div className="mt-2 flex items-center gap-1.5 text-xs text-text-muted">
+          <span aria-hidden="true">/blog/</span>
+          {isEditingSlug ? (
+            <input
+              autoFocus
+              value={editingBlog.slug}
+              onChange={(e) => {
+                setSlugTouched(true);
+                update({ slug: slugify(e.target.value) });
+              }}
+              onBlur={() => setIsEditingSlug(false)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === "Escape") {
+                  e.preventDefault();
+                  setIsEditingSlug(false);
+                }
+              }}
+              aria-label="URL slug"
+              className="w-56 rounded-md border bg-surface px-1.5 py-0.5 font-mono text-xs text-text transition-colors focus:border-accent/40 focus:outline-none"
+            />
+          ) : (
+            <>
+              <span className="font-mono break-all">
+                {editingBlog.slug || "…"}
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsEditingSlug(true)}
+                className="shrink-0 rounded px-1 py-0.5 font-medium text-accent transition-colors hover:bg-accent/10"
+              >
+                Edit
+              </button>
+            </>
+          )}
+        </div>
 
         <p className="mt-3 text-sm text-text-muted">
           {isNew ? (
@@ -200,6 +254,34 @@ export default function BlogEdit({ blog, isNew }: { blog: Blog; isNew: boolean }
         </section>
 
         <section className="mt-6">
+          <h2 className="mb-2 text-sm font-medium text-text-muted">Summary</h2>
+          <textarea
+            name="summary"
+            aria-label="Post summary"
+            rows={3}
+            value={editingBlog.summary ?? ""}
+            onChange={(e) => update({ summary: e.target.value })}
+            placeholder="Brief description for previews and SEO…"
+            className="w-full resize-y rounded-lg border bg-surface px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-text/30 focus:border-accent/40 focus:outline-none"
+          />
+          <div className="mt-1 flex items-baseline justify-between gap-2 text-xs">
+            <span className="text-text-muted">
+              Leave empty to auto-generate from the content.
+            </span>
+            <span
+              className={clsx(
+                "shrink-0 tabular-nums",
+                (editingBlog.summary?.length ?? 0) > SUMMARY_RECOMMENDED_MAX
+                  ? "font-medium text-rose-600"
+                  : "text-text-muted",
+              )}
+            >
+              {editingBlog.summary?.length ?? 0}/{SUMMARY_RECOMMENDED_MAX}
+            </span>
+          </div>
+        </section>
+
+        <section className="mt-6">
           <h2 className="mb-2 text-sm font-medium text-text-muted">Tags</h2>
           <TagsEdit
             tags={tags}
@@ -218,6 +300,7 @@ export default function BlogEdit({ blog, isNew }: { blog: Blog; isNew: boolean }
             <TipTapEditor
               editorContent={blog.content}
               onChangeAction={(content) => update({ content })}
+              onError={(message) => setToastError(message)}
             />
           </div>
         </section>

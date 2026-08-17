@@ -33,18 +33,25 @@ const blogValidation = z.object({
 export async function saveBlog(
   blog: Blog,
   isNew: boolean,
+  previousSlug?: string,
 ): Promise<Blog | { error: string }> {
   const session = await getSession();
   if (!session || session.userRole !== "admin") {
     return { error: "Not authorized" };
   }
 
-  const oldSlug = blog.slug;
-  blog.slug = slugify(blog.title);
+  // The row is located by the slug it was last saved with: the client may
+  // hold a newer, not-yet-saved slug (title mirroring or manual edit).
+  const oldSlug = previousSlug ?? blog.slug;
+  // Respect a slug set in the editor; fall back to deriving it from the title.
+  blog.slug = slugify(blog.slug?.trim() ? blog.slug : blog.title);
   blog.editedDate = isNew ? null : new Date();
   blog.tags = blog.tags?.map((tag) => tag.toLowerCase()) || [];
   blog.content = sanitizeHtml(blog.content);
-  blog.summary = extractSummaryFromHTML(blog.content, 200);
+  // Respect a manually written summary; fall back to auto-extracting it.
+  blog.summary = blog.summary?.trim()
+    ? blog.summary.trim()
+    : extractSummaryFromHTML(blog.content, 200);
 
   const result = blogValidation.safeParse(blog);
   if (!result.success) {
@@ -61,7 +68,16 @@ export async function saveBlog(
     if (isNew) {
       await blogs.insertOne(result.data);
     } else {
-      await blogs.updateOne({ slug: oldSlug }, { $set: result.data });
+      const updateResult = await blogs.updateOne(
+        { slug: oldSlug },
+        { $set: result.data },
+      );
+      if (updateResult.matchedCount === 0) {
+        return {
+          error:
+            "Could not find the post to update. It may have been deleted in another tab.",
+        };
+      }
     }
 
     revalidatePath("/blog");

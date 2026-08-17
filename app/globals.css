@@ -48,6 +48,18 @@ p.is-editor-empty:first-child::before {
   pointer-events: none;
 }
 
+/* Placeholder on empty headings (current node only) */
+.tiptap h1.is-empty::before,
+.tiptap h2.is-empty::before,
+.tiptap h3.is-empty::before {
+  color: var(--color-text-muted);
+  opacity: 0.5;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
 /* Placeholder (on every new line) */
 /* .is-empty::before {
     color: var(--gray-4);

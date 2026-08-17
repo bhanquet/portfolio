@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Loader2, Save, Trash2 } from "lucide-react";
+import { ArrowLeft, Eye, Loader2, Save, Trash2 } from "lucide-react";
 import Button from "@/components/ui/button";
 import Switch from "@/components/ui/switch";
 import clsx from "clsx";
@@ -11,6 +11,8 @@ type EditToolbarProps = {
   dirty: boolean;
   saving: boolean;
   isPublic: boolean;
+  /** When set, shows a "View live" link opening the public post in a new tab. */
+  liveHref?: string;
   onPublicChange: (value: boolean) => void;
   onSave: () => void | Promise<void>;
   onDelete: () => void;
@@ -21,6 +23,7 @@ export default function EditToolbar({
   dirty,
   saving,
   isPublic,
+  liveHref,
   onPublicChange,
   onSave,
   onDelete,
@@ -78,6 +81,20 @@ export default function EditToolbar({
         </div>
 
         <Switch checked={isPublic} onChange={onPublicChange} className="px-1" />
+
+        {liveHref && (
+          <a
+            href={liveHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="View live post"
+            aria-label="View live post"
+            className="inline-flex h-9 items-center gap-1.5 rounded-lg border bg-surface px-2.5 text-sm font-medium text-text-muted transition-colors hover:bg-surface-2 hover:text-text"
+          >
+            <Eye size={15} />
+            <span className="hidden sm:inline">View live</span>
+          </a>
+        )}
 
         <Button onClick={onSave} disabled={saving} className="px-3.5">
           <span className="flex items-center gap-2">
