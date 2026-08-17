@@ -6,6 +6,7 @@ import Image from "next/image";
 import Tags from "@/components/ui/tags";
 import { BlogDate } from "@/components/ui/blogDate";
 import type { Metadata } from "next";
+import { SITE_URL } from "@/lib/site";
 
 export const revalidate = 300; // Revalidate this page every 5 minutes
 
@@ -32,9 +33,48 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const blog = await fetchBlog(slug);
 
+  if (!blog) {
+    return {
+      title: "Not Found",
+      robots: { index: false, follow: false },
+    };
+  }
+
+  const title = blog.title;
+  const description = blog.summary;
+
   return {
-    title: `Brian Hanquet - ${blog ? blog.title : "Not Found"}`,
-    description: blog ? blog.summary : "Blog post by Brian Hanquet",
+    title,
+    description,
+    alternates: {
+      canonical: `/blog/${blog.slug}`,
+    },
+    openGraph: {
+      type: "article",
+      title,
+      description,
+      url: `/blog/${blog.slug}`,
+      publishedTime: blog.createdDate.toISOString(),
+      modifiedTime: blog.editedDate?.toISOString(),
+      authors: ["Brian Hanquet"],
+      tags: blog.tags,
+      images: blog.imagePath
+        ? [{ url: blog.imagePath, alt: blog.title }]
+        : [
+            {
+              url: "/opengraph-image",
+              width: 1200,
+              height: 630,
+              alt: blog.title,
+            },
+          ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: blog.imagePath ? [blog.imagePath] : ["/opengraph-image"],
+    },
   };
 }
 
@@ -48,8 +88,43 @@ export default async function Page({ params }: Props) {
 
   blog.content = sanitizeHtml(blog.content);
 
+  const blogPostingJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "@id": `${SITE_URL}/blog/${blog.slug}`,
+    headline: blog.title,
+    description: blog.summary,
+    image: blog.imagePath ?? null,
+    datePublished: blog.createdDate.toISOString(),
+    dateModified:
+      blog.editedDate?.toISOString() ?? blog.createdDate.toISOString(),
+    author: {
+      "@type": "Person",
+      name: "Brian Hanquet",
+      url: "/",
+    },
+    publisher: {
+      "@type": "Person",
+      name: "Brian Hanquet",
+      url: SITE_URL,
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `${SITE_URL}/blog/${blog.slug}`,
+    },
+    keywords: blog.tags.join(", "),
+    articleSection: "Technology",
+    inLanguage: "en-US",
+  };
+
   return (
     <div className="bg-white p-5 pb-32 rounded-md">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(blogPostingJsonLd).replace(/</g, "\\u003c"),
+        }}
+      />
       <div className="max-w-3xl mx-auto mt-8">
         {/* Title */}
         <h1 key="titleDisplay" className="text-5xl font-bold">

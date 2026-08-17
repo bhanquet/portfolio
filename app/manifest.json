@@ -1,21 +1,27 @@
 {
-  "name": "Brian Hanquet portfolio",
-  "short_name": "Brian portfolio",
+  "name": "Brian Hanquet — Portfolio",
+  "short_name": "Brian Hanquet",
+  "description": "Web developer portfolio — simple, fast, beautiful websites.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f8f6f2",
+  "theme_color": "#0e7ebd",
+  "lang": "en-US",
+  "categories": ["portfolio", "technology", "lifestyle"],
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any"
     },
     {
       "src": "/web-app-manifest-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any"
     }
-  ],
-  "theme_color": "#000000",
-  "background_color": "#ffffff",
-  "display": "standalone"
+  ]
 }

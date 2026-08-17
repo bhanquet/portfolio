@@ -5,6 +5,17 @@ import Search from "@/components/ui/search";
 import Pagination from "@/components/ui/pagination";
 import { Plus } from "lucide-react";
 import { BlogManagementList } from "@/components/ui/blogsManagementList";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Admin",
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+    googleBot: { index: false, follow: false, noimageindex: true },
+  },
+};
 
 export default async function Page(props: {
   searchParams?: Promise<{ search?: string; page?: number }>;

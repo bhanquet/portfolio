@@ -4,11 +4,29 @@ import Search from "@/components/ui/search";
 import Pagination from "@/components/ui/pagination";
 import { BlogList } from "@/components/ui/blogsList";
 import type { Metadata } from "next";
+import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Brian Hanquet - Blog",
+  title: "Blog",
   description:
     "Dive into a world of tech, cars, electronics, and sim racing. Explore tutorials, tips, and insights from a passionate hobbyist.",
+  alternates: {
+    canonical: "/blog",
+  },
+  openGraph: {
+    type: "website",
+    title: "Brian Hanquet - Blog",
+    description:
+      "Dive into a world of tech, cars, electronics, and sim racing. Explore tutorials, tips, and insights from a passionate hobbyist.",
+    url: "/blog",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Brian Hanquet - Blog",
+    description:
+      "Dive into a world of tech, cars, electronics, and sim racing. Explore tutorials, tips, and insights from a passionate hobbyist.",
+  },
+  keywords: ["blog", "tutorials", "tech blog", "sim racing", "electronics"],
 };
 
 export default async function Page(props: {
@@ -30,8 +48,33 @@ export default async function Page(props: {
   ]);
   const totalPages = Math.ceil(totalCount / maxItem);
 
+  const blogJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    name: "Brian Hanquet - Blog",
+    description:
+      "Dive into a world of tech, cars, electronics, and sim racing. Explore tutorials, tips, and insights from a passionate hobbyist.",
+    url: `${SITE_URL}/blog`,
+    blogPost: blogs.slice(0, 10).map((blog) => ({
+      "@type": "BlogPosting",
+      headline: blog.title,
+      url: `${SITE_URL}/blog/${blog.slug}`,
+      datePublished: blog.createdDate.toISOString(),
+      author: {
+        "@type": "Person",
+        name: "Brian Hanquet",
+      },
+    })),
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(blogJsonLd).replace(/</g, "\\u003c"),
+        }}
+      />
       <div className="mx-auto flex mt-12">
         <aside className="hidden lg:block w-1/4 px-6">
           <p className="mb-3 text-gray-700 text-lg font-semibold">Tags</p>

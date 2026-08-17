@@ -4,6 +4,17 @@ import { fetchBlog } from "@/lib/data";
 import { notFound } from "next/navigation";
 import { Blog as BlogType } from "@/lib/definitions";
 import BlogEdit from "@/components/shared/blogEdit";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Admin",
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+    googleBot: { index: false, follow: false, noimageindex: true },
+  },
+};
 
 export default async function Page({
   params,
