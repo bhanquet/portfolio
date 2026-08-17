@@ -12,6 +12,7 @@ type ButtonProps = {
     event: React.MouseEvent<HTMLButtonElement>,
   ) => void | Promise<void>;
   type?: "button" | "submit" | "reset";
+  disabled?: boolean;
 };
 
 export default function Button({
@@ -21,6 +22,7 @@ export default function Button({
   className,
   onClick,
   type = "button",
+  disabled = false,
 }: ButtonProps) {
   const classes = clsx(
     "rounded-md py-2 px-4 shadow-md inline-block transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50",
@@ -29,6 +31,7 @@ export default function Button({
       "bg-muted hover:bg-surface-2 text-text border border-text/10":
         variant !== "primary",
     },
+    disabled && "pointer-events-none opacity-60",
     className,
   );
 
@@ -59,7 +62,7 @@ export default function Button({
   }
 
   return (
-    <button className={classes} onClick={onClick} type={type}>
+    <button className={classes} onClick={onClick} type={type} disabled={disabled}>
       {children}
     </button>
   );

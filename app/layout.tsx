@@ -23,7 +23,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${lexend.className} text-text antialiased bg-background pt-[68px]`}>
+      <body
+      className={`${lexend.className} text-text antialiased bg-background pt-[var(--header-offset)]`}
+      style={{ ["--header-offset" as string]: "68px" }}
+    >
         <Suspense fallback={null}>
           <Header />
         </Suspense>

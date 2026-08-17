@@ -9,5 +9,5 @@ export default async function Page({}) {
     summary: "",
     content: "",
   };
-  return <BlogEdit blog={blog} />;
+  return <BlogEdit blog={blog} isNew />;
 }

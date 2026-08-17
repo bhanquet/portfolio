@@ -1,4 +1,4 @@
-import { ImagePlus, Loader2, Trash } from "lucide-react";
+import { ImagePlus, Loader2, Trash2 } from "lucide-react";
 import { useRef } from "react";
 import Image from "next/image";
 
@@ -18,20 +18,24 @@ export default function ImageUploader({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   return (
-    <div className="mt-6">
+    <div>
       {/* Upload Area */}
       {!imagePath && (
         <div
           onClick={() => fileInputRef.current?.click()}
-          className="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center text-gray-500 hover:border-strongcolor hover:text-strongcolor cursor-pointer transition"
+          className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-text/15 bg-surface px-6 py-10 text-text-muted transition-colors hover:border-accent/50 hover:bg-accent/5 hover:text-accent"
         >
           {isPending ? (
-            <Loader2 className="animate-spin w-6 h-6 text-strongcolor" />
+            <Loader2 className="h-6 w-6 animate-spin text-accent" />
           ) : (
             <>
-              <ImagePlus className="w-8 h-8 mb-2" />
-              <p className="text-sm">Click to upload an image</p>
-              <p className="text-xs text-gray-400 mt-1">PNG or JPG (max 2MB)</p>
+              <span className="grid h-11 w-11 place-items-center rounded-full bg-surface-2">
+                <ImagePlus className="h-5 w-5" />
+              </span>
+              <p className="mt-3 text-sm font-medium">
+                Click to upload a cover image
+              </p>
+              <p className="mt-1 text-xs opacity-70">PNG or JPG, up to 5 MB</p>
             </>
           )}
           <input
@@ -51,22 +55,32 @@ export default function ImageUploader({
 
       {/* Image Preview */}
       {imagePath && (
-        <div className="relative h-64 mt-2 group rounded-lg overflow-hidden shadow-md border border-gray-200">
+        <div className="group relative h-64 overflow-hidden rounded-xl border bg-surface shadow-sm">
           <Image
             src={imagePath}
-            alt="Uploaded"
-            className="object-cover"
+            alt="Cover image"
+            className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
             fill
-          ></Image>
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/45 to-transparent opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+          />
           <button
-            className="absolute top-2 right-2 bg-white/80 rounded-full p-1 hover:bg-white transition"
+            type="button"
+            aria-label="Remove image"
+            disabled={isPending}
+            className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-white/90 text-rose-600 shadow-md backdrop-blur transition-all duration-200 hover:scale-105 hover:bg-white disabled:opacity-70 sm:opacity-0 sm:group-hover:opacity-100"
             onClick={() => {
               onDelete(imagePath);
               setImagePath(null);
             }}
-            type="button"
           >
-            <Trash className="w-4 h-4 text-red-500" />
+            {isPending ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Trash2 className="h-4 w-4" />
+            )}
           </button>
         </div>
       )}

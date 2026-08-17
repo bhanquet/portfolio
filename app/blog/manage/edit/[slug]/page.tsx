@@ -19,6 +19,6 @@ export default async function Page({
 
   blog.content = sanitizeHtml(blog.content);
 
-  return <BlogEdit blog={blog} />;
+  return <BlogEdit blog={blog} isNew={false} />;
   // return "hi";
 }

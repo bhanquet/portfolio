@@ -17,25 +17,18 @@ export default async function Layout({
     <>
       {children}
 
-      {session && (
-        <div className="group fixed bottom-4 right-4">
-          <button
-            className="bg-strongcolor text-white p-3 rounded-full shadow-lg hover:bg-gray-700 transition-colors duration-300"
-            onClick={signout}
-          >
-            <LogOut />
-          </button>
-
-          <div
-            className="absolute right-1/2 bottom-full mb-2 transform translate-x-1/2 
-                  bg-gray-800 text-white text-xs rounded px-2 py-1 
-                  opacity-0 group-hover:opacity-100 transition-opacity duration-200 
-                  pointer-events-none whitespace-nowrap z-10"
-          >
+      <div className="group fixed bottom-5 right-5 z-40">
+        <button
+          onClick={signout}
+          aria-label="Sign out"
+          className="flex items-center rounded-full bg-text p-3.5 text-white shadow-lg shadow-black/15 transition-colors duration-300 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2"
+        >
+          <LogOut className="h-5 w-5 shrink-0" />
+          <span className="max-w-0 overflow-hidden whitespace-nowrap text-sm font-medium opacity-0 transition-all duration-300 group-hover:ml-2 group-hover:max-w-20 group-hover:opacity-100">
             Sign out
-          </div>
-        </div>
-      )}
+          </span>
+        </button>
+      </div>
     </>
   );
 }

@@ -9,12 +9,11 @@ import { JSDOM } from "jsdom";
 import { MongoServerError } from "mongodb";
 import { revalidatePath } from "next/cache";
 import { sanitizeHtml } from "@/lib/sanitize";
+import { deleteImage } from "@/actions/imageUploader";
 
 const blogValidation = z.object({
   title: z.string().min(1).max(200),
-  slug: z.string().refine((val) => val !== "new-page", {
-    message: "Url cannot be 'new-page'",
-  }),
+  slug: z.string().min(1, { message: "Slug must not be empty" }),
   imagePath: z.string().nullable().optional(),
   tags: z.array(
     z
@@ -31,15 +30,18 @@ const blogValidation = z.object({
   public: z.boolean().default(false),
 });
 
-export async function saveBlog(blog: Blog): Promise<Blog | { error: string }> {
+export async function saveBlog(
+  blog: Blog,
+  isNew: boolean,
+): Promise<Blog | { error: string }> {
   const session = await getSession();
   if (!session || session.userRole !== "admin") {
-    return { error: "Not autorized" };
+    return { error: "Not authorized" };
   }
 
   const oldSlug = blog.slug;
   blog.slug = slugify(blog.title);
-  blog.editedDate = oldSlug === "new-page" ? null : new Date();
+  blog.editedDate = isNew ? null : new Date();
   blog.tags = blog.tags?.map((tag) => tag.toLowerCase()) || [];
   blog.content = sanitizeHtml(blog.content);
   blog.summary = extractSummaryFromHTML(blog.content, 200);
@@ -55,11 +57,12 @@ export async function saveBlog(blog: Blog): Promise<Blog | { error: string }> {
   try {
     const db = await getDB();
     const blogs = db.collection("blogs");
-    await blogs.updateOne(
-      { slug: oldSlug },
-      { $set: result.data },
-      { upsert: true },
-    );
+
+    if (isNew) {
+      await blogs.insertOne(result.data);
+    } else {
+      await blogs.updateOne({ slug: oldSlug }, { $set: result.data });
+    }
 
     revalidatePath("/blog");
 
@@ -76,26 +79,39 @@ export async function saveBlog(blog: Blog): Promise<Blog | { error: string }> {
 
 export async function deleteBlog(
   slug: string,
-): Promise<{ error?: string; sucess: boolean }> {
+): Promise<{ error?: string; success: boolean }> {
   const session = await getSession();
   if (!session || session.userRole !== "admin") {
-    return { sucess: false, error: "Not autorized" };
+    return { success: false, error: "Not authorized" };
   }
+
+  let oldImagePath: string | null | undefined;
 
   try {
     const db = await getDB();
     const blogs = db.collection("blogs");
-    const result = await blogs.deleteOne({ slug: slug });
+    const existing = await blogs.findOne<
+      { imagePath?: string | null }
+    >({ slug }, { projection: { imagePath: 1 } });
+    oldImagePath = existing?.imagePath ?? null;
 
-    if (result.deletedCount === 1) {
-      revalidatePath("/blog");
-      return { sucess: true };
+    const result = await blogs.deleteOne({ slug });
+
+    if (result.deletedCount !== 1) {
+      return { success: false, error: "Error while deleting the blog" };
     }
-  } catch {
-    return { sucess: false, error: "Unexpected error" };
-  }
 
-  return { sucess: false, error: "Error while deleting the blog" };
+    if (oldImagePath) {
+      // best-effort: deletion already committed; log but don't fail the action
+      await deleteImage(oldImagePath);
+    }
+
+    revalidatePath("/blog");
+    return { success: true };
+  } catch (error) {
+    console.error("deleteBlog error:", error);
+    return { success: false, error: "Unexpected error" };
+  }
 }
 
 function extractSummaryFromHTML(html: string, maxLength: number = 500): string {
