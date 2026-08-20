@@ -1,13 +1,12 @@
 "use server";
 
-import path from "path";
-import fs from "fs/promises";
+import sharp from "sharp";
 import { getSession } from "@/lib/session";
 import { randomUUID } from "crypto";
+import { deleteFile, getFileUrl, uploadFile } from "@/lib/r2";
 
 const ALLOWED_MIME_TYPES = ["image/png", "image/jpeg"] as const;
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
-const PUBLIC_IMAGES_DIR = path.join(process.cwd(), "public", "images");
 
 type AllowedMimeType = (typeof ALLOWED_MIME_TYPES)[number];
 
@@ -16,18 +15,16 @@ const MAGIC_BYTES: Record<AllowedMimeType, number[]> = {
   "image/jpeg": [0xff, 0xd8, 0xff],
 };
 
-const EXTENSIONS: Record<AllowedMimeType, string> = {
-  "image/png": "png",
-  "image/jpeg": "jpg",
-};
-
-function hasValidMagicBytes(buffer: Buffer, mimeType: AllowedMimeType): boolean {
+function hasValidMagicBytes(
+  buffer: Buffer,
+  mimeType: AllowedMimeType,
+): boolean {
   const signature = MAGIC_BYTES[mimeType];
   return signature.every((byte, index) => buffer[index] === byte);
 }
 
 function normalizeImagePath(imagePath: string): string | null {
-  const match = /^\/images\/[a-zA-Z0-9_-]+\.(png|jpe?g)$/i.exec(imagePath);
+  const match = /images\/[a-zA-Z0-9_-]+\.webp$/i.exec(imagePath);
   return match ? match[0] : null;
 }
 
@@ -49,21 +46,25 @@ export async function uploadImage(
 
   const arrayBuffer = await file.arrayBuffer();
   const buffer = Buffer.from(arrayBuffer);
+  const optimizedBuffer = await sharp(buffer).webp({ quality: 80 }).toBuffer();
 
   const detectedType = file.type as AllowedMimeType;
   if (!hasValidMagicBytes(buffer, detectedType)) {
     return { error: "File content does not match its declared type." };
   }
 
-  const extension = EXTENSIONS[detectedType];
-  const randomName = `${randomUUID()}.${extension}`;
+  const randomName = `${randomUUID()}`;
+  const filename = `images/${Date.now()}-${randomName}.webp`;
 
   try {
-    await fs.mkdir(PUBLIC_IMAGES_DIR, { recursive: true });
-    const filePath = path.join(PUBLIC_IMAGES_DIR, randomName);
-    await fs.writeFile(filePath, buffer);
+    await uploadFile(filename, optimizedBuffer);
 
-    return { path: `/images/${randomName}` };
+    const fileUrl = await getFileUrl(filename);
+    if (fileUrl === false) {
+      return { error: "Failed to retrieve the uploaded image URL." };
+    }
+
+    return { path: fileUrl };
   } catch (error) {
     console.error("Image upload error:", error);
     return { error: "Failed to upload image." };
@@ -83,26 +84,10 @@ export async function deleteImage(
     return { success: false, error: "Invalid image path." };
   }
 
-  const resolvedDir = path.resolve(PUBLIC_IMAGES_DIR);
-  const resolvedTarget = path.resolve(
-    path.join(process.cwd(), "public", normalized),
-  );
-
-  const isInsideDir =
-    resolvedTarget.startsWith(resolvedDir + path.sep) ||
-    resolvedTarget === resolvedDir;
-
-  if (!isInsideDir) {
-    return { success: false, error: "Invalid image path." };
-  }
-
   try {
-    await fs.unlink(resolvedTarget);
+    await deleteFile(normalized);
     return { success: true };
   } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === "ENOENT") {
-      return { success: true };
-    }
     console.error("Image delete error:", error);
     return { success: false, error: "Failed to delete image." };
   }
