@@ -46,11 +46,28 @@ function isSignInPath(pathname: string): boolean {
 }
 
 function getClientIp(request: NextRequest): string {
-  return (
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-    request.headers.get("x-real-ip") ??
-    "unknown"
-  );
+  // `NextRequest.ip` was removed in Next 15+, so we derive the client IP from
+  // proxy-supplied headers. We must NOT trust the client-supplied *prefix* of
+  // X-Forwarded-For (an attacker could spoof it to bypass the rate limiters).
+  // Instead we rely on the value our trusted reverse proxy controls:
+  //   - X-Real-IP: set by the proxy to the real client IP, or
+  //   - the rightmost X-Forwarded-For hop, which the proxy appends for the
+  //     direct client (so it cannot be forged by the client).
+  // This assumes a reverse proxy (e.g. nginx/Caddy/Traefik) sits in front of
+  // the app and rewrites these headers.
+  const realIp = request.headers.get("x-real-ip");
+  if (realIp) return realIp.trim();
+
+  const xff = request.headers.get("x-forwarded-for");
+  if (xff) {
+    const hops = xff
+      .split(",")
+      .map((h) => h.trim())
+      .filter(Boolean);
+    if (hops.length > 0) return hops[hops.length - 1];
+  }
+
+  return "unknown";
 }
 
 async function isSessionValid(token: string | undefined): Promise<boolean> {
@@ -93,7 +110,14 @@ export async function proxy(request: NextRequest) {
       await limiters.api.consume(ip, 1);
     }
 
-    if (pathname === "/api/contact" && request.method === "POST") {
+    // The contact form is a Server Action submitted via POST to the home page.
+    // Server Action requests carry the `Next-Action` header, so we can target
+    // the contact submission precisely instead of a non-existent /api/contact.
+    if (
+      pathname === "/" &&
+      request.method === "POST" &&
+      request.headers.get("Next-Action")
+    ) {
       await limiters.contact.consume(ip, 1);
     }
   } catch {
