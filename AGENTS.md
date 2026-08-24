@@ -12,7 +12,7 @@ This file contains project-specific context for coding agents working on this Ne
 
 ## Security rules
 
-1. **Never expose secrets in URLs or client code.** `AUTH_SECRET` is only used server-side to gate `/auth/signin/[secret]`.
+1. **Never expose secrets in URLs or client code.** `SIGNIN_SECRET` is only used server-side to gate `/auth/signin/[secret]`.
 2. **Sanitize HTML server-side.** Use `sanitizeHtml()` from `lib/sanitize.ts` before storing any rich text. Client-side DOMPurify is optional defense-in-depth.
 3. **Validate file uploads.** Use the hardened `uploadImage` / `deleteImage` in `actions/imageUploader.ts`:
    - whitelist MIME types + magic bytes

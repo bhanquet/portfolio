@@ -12,15 +12,15 @@ export async function signin(_: FormState, formData: FormData) {
   if (
     typeof email === "string" &&
     typeof password === "string" &&
-    process.env.AUTH_PASSWORD !== undefined &&
-    process.env.AUTH_EMAIL !== undefined
+    process.env.ADMIN_PASSWORD !== undefined &&
+    process.env.ADMIN_EMAIL !== undefined
   ) {
     const passwordMatched = await bcrypt.compare(
       password,
-      process.env.AUTH_PASSWORD,
+      process.env.ADMIN_PASSWORD,
     );
 
-    if (email === process.env.AUTH_EMAIL && passwordMatched) {
+    if (email === process.env.ADMIN_EMAIL && passwordMatched) {
       await createSession({
         userId: 1,
         userName: "Brian",

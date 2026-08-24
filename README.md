@@ -24,8 +24,8 @@ A personal portfolio and blog built with **Next.js 16** (App Router), **React 19
 2. Fill in `.env.local`:
 
    - `MONGODB_URI` / `MONGODB_DB`
-   - `SESSION_SECRET` and `AUTH_SECRET` — generate with `openssl rand -base64 64`
-   - `AUTH_EMAIL` and `AUTH_PASSWORD` — hash the admin password with bcrypt
+   - `SESSION_SECRET` and `SIGNIN_SECRET` — generate with `openssl rand -base64 64`
+   - `ADMIN_EMAIL` and `ADMIN_PASSWORD` — hash the admin password with bcrypt
    - `RESEND_API_KEY` and `RESEND_FROM_EMAIL` for the contact form
    - `DOMAIN` for the sitemap and contact email
 
@@ -75,7 +75,7 @@ public/cv.pdf        # CV placeholder — replace with your own
 
 ## Admin area
 
-The admin sign-in URL is `/auth/signin/{AUTH_SECRET}`. Keep `AUTH_SECRET` confidential — it acts as the gatekeeper for the login page. Once logged in, you can create and edit blog posts at `/blog/manage`.
+The admin sign-in URL is `/auth/signin/{SIGNIN_SECRET}`. Keep `SIGNIN_SECRET` confidential — it acts as the gatekeeper for the login page. Once logged in, you can create and edit blog posts at `/blog/manage`.
 
 ## Environment variables
 

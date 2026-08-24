@@ -20,7 +20,7 @@ export default async function SignInPage({
 }) {
   const { secret } = await params;
 
-  if (secret !== process.env.AUTH_SECRET) {
+  if (secret !== process.env.SIGNIN_SECRET) {
     return notFound();
   }
 

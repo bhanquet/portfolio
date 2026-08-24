@@ -1,10 +1,8 @@
 import type { NextConfig } from "next";
-const s3Hostname = process.env.S3_ENDPOINT
-  ? new URL(process.env.S3_ENDPOINT).hostname
-  : undefined;
 
-const publicHostname = process.env.PUBLIC_FILE_URL
-  ? new URL(process.env.PUBLIC_FILE_URL).hostname
+// Public R2 URL (e.g. https://r2.hanbr.be) used to serve uploaded images.
+const r2PublicHostname = process.env.R2_PUBLIC_URL
+  ? new URL(process.env.R2_PUBLIC_URL).hostname
   : undefined;
 
 const nextConfig: NextConfig = {
@@ -15,21 +13,12 @@ const nextConfig: NextConfig = {
         hostname: "avatars.githubusercontent.com",
         pathname: "/u/*",
       },
-      ...(s3Hostname
+      ...(r2PublicHostname
         ? [
             {
               protocol: "https" as const,
-              hostname: s3Hostname,
+              hostname: r2PublicHostname,
               pathname: "/**",
-            },
-          ]
-        : []),
-      ...(publicHostname
-        ? [
-            {
-              protocol: "https" as const,
-              hostname: publicHostname,
-              pathname: "/images/**",
             },
           ]
         : []),

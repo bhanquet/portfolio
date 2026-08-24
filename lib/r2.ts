@@ -5,25 +5,24 @@ import {
   HeadObjectCommand,
 } from "@aws-sdk/client-s3";
 
-const s3Region = process.env.S3_REGION || "auto"; // Required by AWS SDK, not used by R2
-const s3Endpoint = process.env.S3_ENDPOINT;
-const s3AccessKeyId = process.env.S3_ACCESS_KEY_ID;
-const s3SecretAccessKey = process.env.S3_SECRET_ACCESS_KEY;
-const s3BucketName = process.env.S3_BUCKET_NAME || "portfolio";
-const publicFileUrl =
-  process.env.PUBLIC_FILE_URL?.replace(/\/$/, "") ||
-  `${s3Endpoint}/${s3BucketName}`;
+const R2_REGION = "auto"; // Required by AWS SDK, not used by R2
+const r2Endpoint = process.env.R2_ENDPOINT;
+const r2AccessKeyId = process.env.R2_ACCESS_KEY_ID;
+const r2SecretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
+const r2BucketName = process.env.R2_BUCKET_NAME || "portfolio";
+const r2PublicUrl = process.env.R2_PUBLIC_URL?.replace(/\/$/, "");
 
-if (!s3Endpoint) throw new Error("Missing S3_ENDPOINT");
-if (!s3AccessKeyId) throw new Error("Missing S3_ACCESS_KEY_ID");
-if (!s3SecretAccessKey) throw new Error("Missing S3_SECRET_ACCESS_KEY");
+if (!r2Endpoint) throw new Error("Missing R2_ENDPOINT");
+if (!r2AccessKeyId) throw new Error("Missing R2_ACCESS_KEY_ID");
+if (!r2SecretAccessKey) throw new Error("Missing R2_SECRET_ACCESS_KEY");
+if (!r2PublicUrl) throw new Error("Missing R2_PUBLIC_URL");
 
 const r2 = new S3Client({
-  region: s3Region, // Required by AWS SDK, not used by R2
-  endpoint: s3Endpoint || "",
+  region: R2_REGION, // Required by AWS SDK, not used by R2
+  endpoint: r2Endpoint || "",
   credentials: {
-    accessKeyId: s3AccessKeyId,
-    secretAccessKey: s3SecretAccessKey,
+    accessKeyId: r2AccessKeyId,
+    secretAccessKey: r2SecretAccessKey,
   },
 });
 
@@ -31,7 +30,7 @@ export async function uploadFile(key: string, body: Buffer | string) {
   // Upload a file
   await r2.send(
     new PutObjectCommand({
-      Bucket: s3BucketName,
+      Bucket: r2BucketName,
       Key: key,
       Body: body,
     }),
@@ -41,7 +40,7 @@ export async function uploadFile(key: string, body: Buffer | string) {
 export async function deleteFile(key: string) {
   await r2.send(
     new DeleteObjectCommand({
-      Bucket: s3BucketName,
+      Bucket: r2BucketName,
       Key: key,
     }),
   );
@@ -49,7 +48,7 @@ export async function deleteFile(key: string) {
 
 export async function fileExists(key: string): Promise<boolean> {
   const command = new HeadObjectCommand({
-    Bucket: s3BucketName,
+    Bucket: r2BucketName,
     Key: key,
   });
 
@@ -70,9 +69,9 @@ export async function fileExists(key: string): Promise<boolean> {
 
 export async function getFileUrl(key: string): Promise<string | false> {
   // Check if the file exists
-  if (!fileExists(key)) {
+  if (!(await fileExists(key))) {
     return false; // File does not exist
   }
 
-  return `${publicFileUrl}/${key}`; // Return the public URL of the file
+  return `${r2PublicUrl}/${key}`; // Return the public URL of the file
 }
