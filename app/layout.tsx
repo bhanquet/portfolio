@@ -10,9 +10,8 @@ const lexend = Lexend({
   subsets: ["latin"],
   fallback: ["system-ui", "arial"],
 });
-
 const description =
-  "I create simple, fast, and beautiful websites that are easy to use.";
+  "Portfolio and blog of Brian Hanquet. Discover my projects, technical experiments, and articles about web development, electronics, 3D printing, and technology.";
 
 const keywords = [
   "Brian Hanquet",
@@ -48,21 +47,11 @@ export const metadata: Metadata = {
     siteName: "Brian Hanquet",
     title: "Brian Hanquet — Web Developer Portfolio",
     description,
-    images: [
-      {
-        url: "/opengraph-image",
-        width: 1200,
-        height: 630,
-        alt: "Brian Hanquet — Web Developer Portfolio",
-      },
-    ],
   },
   twitter: {
-    card: "summary_large_image",
     title: "Brian Hanquet — Web Developer Portfolio",
     description,
     creator: "@brianhanquet",
-    images: ["/opengraph-image"],
   },
   robots: {
     index: true,
@@ -87,9 +76,6 @@ export const metadata: Metadata = {
     apple: "/apple-icon.png",
   },
   manifest: "/manifest.json",
-  verification: {
-    google: process.env.GOOGLE_SITE_VERIFICATION,
-  },
   category: "technology",
 };
 
@@ -105,9 +91,12 @@ const personJsonLd = {
   "@type": "Person",
   name: "Brian Hanquet",
   url: SITE_URL,
-  image: "/images/brian_hero.png",
   jobTitle: "Full-stack Web Developer",
   knowsAbout: keywords,
+  sameAs: [
+    "https://github.com/bhanquet/",
+    "https://www.linkedin.com/in/bhanquet/",
+  ],
 };
 
 const websiteJsonLd = {
@@ -135,9 +124,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-      className={`${lexend.className} text-text antialiased bg-background pt-[var(--header-offset)]`}
-      style={{ ["--header-offset" as string]: "68px" }}
-    >
+        className={`${lexend.className} text-text antialiased bg-background pt-[var(--header-offset)]`}
+        style={{ ["--header-offset" as string]: "68px" }}
+      >
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
