@@ -80,7 +80,9 @@ export async function saveBlog(
       }
     }
 
-    revalidatePath("/blog");
+    revalidatePath("/blog", "layout");
+    revalidatePath("/");
+    revalidatePath("/sitemap.xml");
 
     return result.data;
   } catch (error) {
@@ -122,7 +124,9 @@ export async function deleteBlog(
       await deleteImage(oldImagePath);
     }
 
-    revalidatePath("/blog");
+    revalidatePath("/blog", "layout");
+    revalidatePath("/");
+    revalidatePath("/sitemap.xml");
     return { success: true };
   } catch (error) {
     console.error("deleteBlog error:", error);
