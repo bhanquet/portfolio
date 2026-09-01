@@ -4,6 +4,7 @@ import { Blog } from "@/lib/definitions";
 import { AnimatePresence, motion } from "motion/react";
 import { PenLine, SearchX } from "lucide-react";
 import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 import BlogCard from "@/components/ui/blogCard";
 import Button from "@/components/ui/button";
 
@@ -14,6 +15,8 @@ export function BlogManagementList({
   blogs: Blog[];
   search?: string;
 }) {
+  const locale = useLocale();
+  const t = useTranslations("Admin");
   if (blogs.length === 0) {
     return (
       <motion.div
@@ -28,16 +31,14 @@ export function BlogManagementList({
               <SearchX size={20} />
             </span>
             <h2 className="mt-4 text-lg font-semibold">
-              No results for &ldquo;{search}&rdquo;
+              {t("noResultsTitle", { search })}
             </h2>
-            <p className="mt-1 text-sm text-text-muted">
-              Try a different search term.
-            </p>
+            <p className="mt-1 text-sm text-text-muted">{t("noResultsHint")}</p>
             <Link
-              href="/blog/manage"
+              href={`/${locale}/blog/manage`}
               className="mt-5 text-sm font-medium text-accent hover:underline"
             >
-              Clear search
+              {t("clearSearch")}
             </Link>
           </>
         ) : (
@@ -45,12 +46,10 @@ export function BlogManagementList({
             <span className="grid h-12 w-12 place-items-center rounded-full bg-surface-2 text-text-muted">
               <PenLine size={20} />
             </span>
-            <h2 className="mt-4 text-lg font-semibold">No posts yet</h2>
-            <p className="mt-1 text-sm text-text-muted">
-              Your drafts and published posts will show up here.
-            </p>
-            <Button href="/blog/manage/new-blog" className="mt-6">
-              New post
+            <h2 className="mt-4 text-lg font-semibold">{t("noPostsTitle")}</h2>
+            <p className="mt-1 text-sm text-text-muted">{t("noPostsHint")}</p>
+            <Button href={`/${locale}/blog/manage/new-blog`} className="mt-6">
+              {t("newPost")}
             </Button>
           </>
         )}
@@ -62,7 +61,7 @@ export function BlogManagementList({
     <div className="mt-6 flex flex-col gap-3">
       <AnimatePresence>
         {blogs.map((blog, index) => (
-          <BlogCard key={blog.slug} blog={blog} index={index} />
+          <BlogCard key={`${blog.translationGroupId}-${blog.locale}-${blog.slug}`} blog={blog} index={index} />
         ))}
       </AnimatePresence>
     </div>

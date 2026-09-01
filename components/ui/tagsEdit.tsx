@@ -3,6 +3,7 @@
 import { X } from "lucide-react";
 import { useState } from "react";
 import clsx from "clsx";
+import { useTranslations } from "next-intl";
 
 const MAX_TAG_LENGTH = 20;
 
@@ -15,6 +16,7 @@ export default function TagsEdit({
   onTagAdd?: (tag: string) => void;
   onTagRemove?: (tagIndex: number) => void;
 }) {
+  const t = useTranslations("Admin");
   const [draft, setDraft] = useState("");
 
   const commitDraft = () => {
@@ -33,7 +35,7 @@ export default function TagsEdit({
           #{tag}
           <button
             type="button"
-            aria-label={`Remove tag ${tag}`}
+            aria-label={t("tagRemoveLabel", { tag })}
             onClick={(e) => {
               e.preventDefault();
               onTagRemove?.(index);
@@ -58,8 +60,8 @@ export default function TagsEdit({
         <input
           value={draft}
           type="text"
-          aria-label="Add tag"
-          placeholder="Add tag"
+          aria-label={t("tagAddPlaceholder")}
+          placeholder={t("tagAddPlaceholder")}
           onChange={(e) => {
             setDraft(
               e.target.value

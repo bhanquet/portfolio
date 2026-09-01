@@ -5,6 +5,9 @@ import Link, { LinkProps } from "next/link";
 import { ReactNode, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { motion } from "motion/react";
+import { useTranslations } from "next-intl";
+import { routing } from "@/i18n/routing";
+import LanguageSwitcher from "@/components/shared/languageSwitcher";
 
 const nunito = Nunito({
   subsets: ["latin"],
@@ -32,8 +35,26 @@ function NavLink({ children, isActive = false, ...props }: NavLinkProps) {
   );
 }
 
+function stripLocale(pathname: string): string {
+  const seg = pathname.split("/")[1];
+  if (seg && (routing.locales as readonly string[]).includes(seg)) {
+    const stripped = "/" + pathname.split("/").slice(2).join("/");
+    return stripped === "/" ? "/" : stripped.replace(/\/+$/, "") || "/";
+  }
+  return pathname;
+}
+
+function getLocale(pathname: string): string {
+  const seg = pathname.split("/")[1];
+  if (seg && (routing.locales as readonly string[]).includes(seg)) return seg;
+  return routing.defaultLocale;
+}
+
 export default function Header() {
-  const pathname = usePathname();
+  const t = useTranslations("Header");
+  const rawPathname = usePathname();
+  const pathname = stripLocale(rawPathname);
+  const locale = getLocale(rawPathname);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -60,11 +81,16 @@ export default function Header() {
   }, []);
 
   const links = [
-    { label: "Home", href: "/" },
-    { label: "Projects", href: "/#projects" },
-    { label: "Blog", href: "/blog" },
-    { label: "Contact", href: "/#contact" },
+    { label: t("home"), href: `/${locale}` },
+    { label: t("projects"), href: `/${locale}#projects` },
+    { label: t("blog"), href: `/${locale}/blog` },
+    { label: t("contact"), href: `/${locale}#contact` },
   ];
+  // For isActive we compare stripped pathname
+  const isActiveFor = (href: string) => {
+    const strippedHref = stripLocale(href);
+    return pathname === strippedHref;
+  };
 
   return (
     <header
@@ -75,20 +101,25 @@ export default function Header() {
       }`}
     >
       <motion.nav
-        className={`${nunito.className} flex mx-auto justify-between max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] text-lg`}
+        className={`${nunito.className} flex mx-auto items-center justify-between gap-3 sm:gap-6 max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] text-base sm:text-lg`}
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
       >
-        {links.map((link, key) => (
-          <NavLink
-            key={`navlink-${key}`}
-            href={link.href}
-            isActive={pathname === link.href}
-          >
-            {link.label}
-          </NavLink>
-        ))}
+        <div className="flex items-center gap-4 sm:gap-6 min-w-0">
+          {links.map((link, key) => (
+            <NavLink
+              key={`navlink-${key}`}
+              href={link.href}
+              isActive={isActiveFor(link.href)}
+            >
+              {link.label}
+            </NavLink>
+          ))}
+        </div>
+        <div className="shrink-0">
+          <LanguageSwitcher />
+        </div>
       </motion.nav>
     </header>
   );

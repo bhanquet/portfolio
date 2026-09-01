@@ -1,6 +1,7 @@
 import { ImagePlus, Loader2, Trash2 } from "lucide-react";
 import { useRef } from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 export default function ImageUploader({
   imagePath,
@@ -16,6 +17,7 @@ export default function ImageUploader({
   isPending: boolean;
 }) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const t = useTranslations("Admin");
 
   return (
     <div>
@@ -32,10 +34,8 @@ export default function ImageUploader({
               <span className="grid h-11 w-11 place-items-center rounded-full bg-surface-2">
                 <ImagePlus className="h-5 w-5" />
               </span>
-              <p className="mt-3 text-sm font-medium">
-                Click to upload a cover image
-              </p>
-              <p className="mt-1 text-xs opacity-70">PNG or JPG, up to 5 MB</p>
+              <p className="mt-3 text-sm font-medium">{t("imageUploadPrompt")}</p>
+              <p className="mt-1 text-xs opacity-70">{t("imageUploadHint")}</p>
             </>
           )}
           <input
@@ -58,7 +58,7 @@ export default function ImageUploader({
         <div className="group relative h-64 overflow-hidden rounded-xl border bg-surface shadow-sm">
           <Image
             src={imagePath}
-            alt="Cover image"
+            alt={t("imageCoverAlt")}
             className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
             fill
           />
@@ -68,7 +68,7 @@ export default function ImageUploader({
           />
           <button
             type="button"
-            aria-label="Remove image"
+            aria-label={t("imageRemove")}
             disabled={isPending}
             className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-white/90 text-rose-600 shadow-md backdrop-blur transition-all duration-200 hover:scale-105 hover:bg-white disabled:opacity-70 sm:opacity-0 sm:group-hover:opacity-100"
             onClick={() => {

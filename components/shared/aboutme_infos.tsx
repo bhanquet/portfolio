@@ -1,5 +1,6 @@
 "use client";
 import { Variants, motion } from "motion/react";
+import { useTranslations } from "next-intl";
 
 const container: Variants = {
   hidden: { opacity: 0, y: 30 },
@@ -23,6 +24,7 @@ const item: Variants = {
 };
 
 export default function AboutMeInfos() {
+  const t = useTranslations("About");
   return (
     <motion.div
       className="lg:flex items-center justify-center lg:p-10 mx-auto"
@@ -33,25 +35,15 @@ export default function AboutMeInfos() {
     >
       <motion.div variants={item} className="lg:mr-7">
         <h3 className="text-4xl md:text-5xl font-bold text-text mb-4">
-          About
+          {t("title")}
           <span className="block mt-3 h-1 w-16 bg-accent rounded-full" />
         </h3>
       </motion.div>
 
       <div className="lg:max-w-md lg:border-l-4 border-text lg:pl-7 space-y-4">
-        <motion.p variants={item}>
-          I love working on new technologies and learning new things.
-        </motion.p>
-        <motion.p variants={item}>
-          I build web applications that are fast, user-friendly, and efficient.
-          I focus on performance, automation, and security to ensure reliability
-          in every project.
-        </motion.p>
-        <motion.p variants={item}>
-          I also have a systems and infrastructure background that allow me to
-          seamlessly integrate applications with cloud services, databases, and
-          networking solutions.
-        </motion.p>
+        <motion.p variants={item}>{t("p1")}</motion.p>
+        <motion.p variants={item}>{t("p2")}</motion.p>
+        <motion.p variants={item}>{t("p3")}</motion.p>
       </div>
     </motion.div>
   );

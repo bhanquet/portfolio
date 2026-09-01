@@ -4,9 +4,11 @@ import Input from "@/components/ui/form/input";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
 import { motion } from "motion/react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 export default function Search() {
+  const t = useTranslations("Blog");
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -33,7 +35,7 @@ export default function Search() {
       <Input
         className="hover:shadow-lg focus:shadow-lg bg-white"
         autoComplete="off"
-        placeholder="Search..."
+        placeholder={t("searchPlaceholder")}
         onChange={(e) => {
           handleSearch(e.target.value);
         }}

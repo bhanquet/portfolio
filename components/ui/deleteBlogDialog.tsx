@@ -8,6 +8,7 @@ import {
   DialogTitle,
 } from "@headlessui/react";
 import { Trash2, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export default function DeleteBlogDialog({
   open,
@@ -20,6 +21,7 @@ export default function DeleteBlogDialog({
   onClose: () => void;
   onConfirm: () => void | Promise<void>;
 }) {
+  const t = useTranslations("Admin");
   return (
     <Dialog open={open} onClose={onClose} className="relative z-[60]">
       <DialogBackdrop
@@ -38,13 +40,13 @@ export default function DeleteBlogDialog({
                 <Trash2 size={17} />
               </span>
               <DialogTitle className="text-base font-semibold text-white">
-                Delete this post?
+                {t("deleteTitle")}
               </DialogTitle>
             </div>
             <button
               type="button"
               onClick={onClose}
-              aria-label="Close dialog"
+              aria-label={t("cancel")}
               className="rounded-full p-1.5 text-white/80 transition-colors hover:bg-white/15 hover:text-white"
             >
               <X size={18} />
@@ -53,7 +55,7 @@ export default function DeleteBlogDialog({
 
           <Description className="px-5 py-4 text-sm leading-relaxed text-text-muted">
             <span className="font-medium text-text">&ldquo;{title}&rdquo;</span>{" "}
-            will be permanently deleted. This action cannot be undone.
+            {t("deleteDescription")}
           </Description>
 
           <div className="flex justify-end gap-2 border-t bg-surface-2/60 px-5 py-3.5">
@@ -62,7 +64,7 @@ export default function DeleteBlogDialog({
               onClick={onClose}
               className="rounded-lg border bg-surface px-4 py-2 text-sm font-medium text-text transition-colors hover:bg-surface-2"
             >
-              Cancel
+              {t("cancel")}
             </button>
             <button
               type="button"
@@ -70,7 +72,7 @@ export default function DeleteBlogDialog({
               className="inline-flex items-center gap-2 rounded-lg bg-rose-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-rose-700"
             >
               <Trash2 size={15} />
-              Delete
+              {t("delete")}
             </button>
           </div>
         </DialogPanel>

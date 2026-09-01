@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect } from "react";
 import { motion } from "motion/react";
+import { useTranslations } from "next-intl";
 import Button from "../ui/button";
 import Input from "../ui/form/input";
 import Textarea from "../ui/form/textarea";
@@ -12,6 +13,7 @@ interface ContactProps {
 }
 
 export default function Contact({ email }: ContactProps) {
+  const t = useTranslations("Contact");
   const [state, formAction, isPending] = useActionState(sendContactEmail, null);
 
   useEffect(() => {
@@ -32,11 +34,11 @@ export default function Contact({ email }: ContactProps) {
     >
       <div className="bg-surface max-w-3xl mx-auto rounded-md shadow-lg p-4 lg:p-10">
         <h3 className="text-4xl md:text-5xl font-bold text-text mb-6">
-          Contact
+          {t("title")}
           <span className="block mt-3 h-1 w-16 bg-accent rounded-full" />
         </h3>
         <p>
-          You can contact me at{" "}
+          {t("intro")}{" "}
           <a
             className="text-accent hover:text-accent-dark transition-colors"
             href={`mailto:${email}`}
@@ -47,7 +49,7 @@ export default function Contact({ email }: ContactProps) {
 
         {state?.success && (
           <div className="mb-4 p-3 bg-green-100 text-green-800 rounded-md">
-            Your message has been sent successfully.
+            {t("success")}
           </div>
         )}
         {state?.error && (
@@ -61,14 +63,14 @@ export default function Contact({ email }: ContactProps) {
             <Input
               name="firstName"
               type="text"
-              placeholder="Firstname"
+              placeholder={t("firstName")}
               required
               maxLength={50}
             />
             <Input
               name="lastName"
               type="text"
-              placeholder="Lastname"
+              placeholder={t("lastName")}
               required
               maxLength={50}
             />
@@ -76,14 +78,14 @@ export default function Contact({ email }: ContactProps) {
               name="email"
               className="col-span-2"
               type="email"
-              placeholder="Email"
+              placeholder={t("email")}
               required
               maxLength={254}
             />
             <Textarea
               name="message"
               className="col-span-2"
-              placeholder="Message"
+              placeholder={t("message")}
               required
               minLength={10}
               maxLength={5000}
@@ -91,7 +93,7 @@ export default function Contact({ email }: ContactProps) {
             />
           </div>
           <div className="mt-4">
-            <Button type="submit">{isPending ? "Sending..." : "Send"}</Button>
+            <Button type="submit">{isPending ? t("sending") : t("send")}</Button>
           </div>
         </form>
       </div>

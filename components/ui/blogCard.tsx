@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { BlogDate } from "./blogDate";
+import { useLocale, useTranslations } from "next-intl";
 import clsx from "clsx";
 
 const MAX_TAGS = 4;
@@ -16,8 +17,11 @@ export default function BlogCard({
   blog: Blog;
   index: number;
 }) {
+  const fallbackLocale = useLocale();
+  const t = useTranslations("Blog");
   const isPublic = blog.public === true;
   const tags = blog.tags ?? [];
+  const targetLocale = blog.locale || fallbackLocale;
 
   return (
     <motion.article
@@ -28,12 +32,17 @@ export default function BlogCard({
       transition={{ delay: index * 0.05, duration: 0.35, ease: "easeOut" }}
     >
       <Link
-        href={`/blog/manage/edit/${blog.slug}`}
+        href={`/${targetLocale}/blog/manage/edit/${blog.slug}`}
         className="group block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
       >
         <div className="rounded-xl border bg-surface p-5 shadow-sm transition-all duration-200 group-hover:-translate-y-0.5 group-hover:border-accent/30 group-hover:shadow-md">
           <div className="flex items-center justify-between gap-3">
-            <StatusPill isPublic={isPublic} />
+            <div className="flex items-center gap-2">
+              <StatusPill isPublic={isPublic} />
+              <span className="rounded-full bg-surface-2 px-2 py-0.5 text-[10px] font-bold tracking-wide text-text-muted">
+                {targetLocale.toUpperCase()}
+              </span>
+            </div>
             <span className="shrink-0 text-xs text-text-muted">
               <BlogDate date={blog.createdDate} />
             </span>
@@ -44,7 +53,7 @@ export default function BlogCard({
           </h3>
 
           <p className="mt-1 line-clamp-2 min-h-10 text-sm text-text-muted">
-            {blog.summary || "No content yet."}
+            {blog.summary || t("noContent")}
           </p>
 
           <div className="mt-4 flex items-center justify-between gap-3">
@@ -74,6 +83,7 @@ export default function BlogCard({
 }
 
 function StatusPill({ isPublic }: { isPublic: boolean }) {
+  const t = useTranslations("Admin");
   return (
     <span
       className={clsx(
@@ -89,7 +99,7 @@ function StatusPill({ isPublic }: { isPublic: boolean }) {
           isPublic ? "bg-emerald-500" : "bg-amber-500",
         )}
       />
-      {isPublic ? "Public" : "Draft"}
+      {isPublic ? t("public") : t("draft")}
     </span>
   );
 }

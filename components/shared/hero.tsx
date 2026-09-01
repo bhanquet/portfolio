@@ -2,6 +2,7 @@
 
 import { Nunito } from "next/font/google";
 import { motion, Variants } from "motion/react";
+import { useTranslations } from "next-intl";
 import Button from "@/components/ui/button";
 import Image from "next/image";
 import brianHeroImage from "@/images/brian_hero.png";
@@ -11,6 +12,7 @@ const nunito = Nunito({
 });
 
 export default function Hero() {
+  const t = useTranslations("Hero");
   const container: Variants = {
     visible: {
       opacity: 1,
@@ -53,22 +55,22 @@ export default function Hero() {
           variants={item}
           className="text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight text-text"
         >
-          I&apos;m{" "}
-          <span className="text-accent block sm:inline">Brian Hanquet</span>
+          {t("titlePrefix")}{" "}
+          <span className="text-accent block sm:inline">{t("titleName")}</span>
         </motion.h1>
         <motion.h2
           variants={item}
           className="mt-4 md:mt-6 text-lg md:text-2xl text-text-muted max-w-xl mx-auto md:mx-0"
         >
-          I create simple, fast, and beautiful websites that are easy to use.
+          {t("subtitle")}
         </motion.h2>
         <motion.div
           variants={item}
           className="mt-10 md:mt-12 flex flex-wrap justify-center md:justify-start gap-4"
         >
-          <Button href="#contact">Contact me</Button>
+          <Button href="#contact">{t("ctaContact")}</Button>
           <Button href="#projects" variant="secondary">
-            See my work
+            {t("ctaProjects")}
           </Button>
         </motion.div>
       </motion.div>
@@ -81,7 +83,7 @@ export default function Hero() {
       >
         <Image
           src={brianHeroImage}
-          alt="Image of Brian Hanquet"
+          alt={t("imageAlt")}
           width={1200}
           height={1200}
           className="max-h-[80vh] w-auto max-w-full object-contain object-right-bottom"

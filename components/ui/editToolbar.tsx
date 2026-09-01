@@ -1,10 +1,11 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { ArrowLeft, Eye, Loader2, Save, Trash2 } from "lucide-react";
 import Button from "@/components/ui/button";
 import Switch from "@/components/ui/switch";
 import clsx from "clsx";
+import { useTranslations } from "next-intl";
 
 type EditToolbarProps = {
   isNew: boolean;
@@ -29,20 +30,21 @@ export default function EditToolbar({
   onDelete,
 }: EditToolbarProps) {
   const router = useRouter();
+  const t = useTranslations("Admin");
 
   const status = saving
-    ? { dot: "bg-accent", pulse: true, label: "Saving…" }
+    ? { dot: "bg-accent", pulse: true, label: t("toolbarSaving") }
     : dirty
-      ? { dot: "bg-amber-500", pulse: true, label: "Unsaved changes" }
+      ? { dot: "bg-amber-500", pulse: true, label: t("toolbarUnsaved") }
       : isNew
-        ? { dot: "bg-text/25", pulse: false, label: "New post" }
-        : { dot: "bg-emerald-500", pulse: false, label: "Saved" };
+        ? { dot: "bg-text/25", pulse: false, label: t("toolbarNewPost") }
+        : { dot: "bg-emerald-500", pulse: false, label: t("toolbarSaved") };
 
   const handleBack = () => {
     // Guards against in-app (SPA) navigation when there are unsaved edits.
-    // Full-page unload is handled by the `beforeunload` listener in blogEdit.tsx —
+    // Full-page unload is handled by the `beforeunload` listener in blogEditTabbed.tsx —
     // these two mechanisms are complementary, not redundant.
-    if (dirty && !window.confirm("You have unsaved changes. Leave anyway?")) {
+    if (dirty && !window.confirm(t("toolbarUnsavedConfirm"))) {
       return;
     }
     router.push("/blog/manage");
@@ -54,7 +56,7 @@ export default function EditToolbar({
         <button
           type="button"
           onClick={handleBack}
-          aria-label="Back to posts"
+          aria-label={t("toolbarBack")}
           className="grid h-9 w-9 place-items-center rounded-lg text-text-muted transition-colors hover:bg-surface-2 hover:text-text"
         >
           <ArrowLeft size={18} />
@@ -80,19 +82,25 @@ export default function EditToolbar({
           {status.label}
         </div>
 
-        <Switch checked={isPublic} onChange={onPublicChange} className="px-1" />
+        <Switch
+          checked={isPublic}
+          onChange={onPublicChange}
+          className="px-1"
+          onLabel={t("public")}
+          offLabel={t("draft")}
+        />
 
         {liveHref && (
           <a
             href={liveHref}
             target="_blank"
             rel="noopener noreferrer"
-            title="View live post"
-            aria-label="View live post"
+            title={t("toolbarViewLive")}
+            aria-label={t("toolbarViewLive")}
             className="inline-flex h-9 items-center gap-1.5 rounded-lg border bg-surface px-2.5 text-sm font-medium text-text-muted transition-colors hover:bg-surface-2 hover:text-text"
           >
             <Eye size={15} />
-            <span className="hidden sm:inline">View live</span>
+            <span className="hidden sm:inline">{t("toolbarViewLive")}</span>
           </a>
         )}
 
@@ -103,7 +111,7 @@ export default function EditToolbar({
             ) : (
               <Save size={16} />
             )}
-            {saving ? "Saving…" : "Save"}
+            {saving ? t("toolbarSaving") : t("toolbarSave")}
           </span>
         </Button>
 
@@ -111,11 +119,11 @@ export default function EditToolbar({
           <button
             type="button"
             onClick={onDelete}
-            aria-label="Delete post"
+            aria-label={t("toolbarDeletePost")}
             className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-rose-200 bg-rose-50 px-2.5 text-sm font-medium text-rose-700 transition-colors hover:bg-rose-100"
           >
             <Trash2 size={15} />
-            <span className="hidden sm:inline">Delete</span>
+            <span className="hidden sm:inline">{t("toolbarDelete")}</span>
           </button>
         )}
       </div>

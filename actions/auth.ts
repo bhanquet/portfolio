@@ -2,8 +2,9 @@
 
 import { FormState } from "@/lib/definitions";
 import bcrypt from "bcrypt";
-import { redirect } from "next/navigation";
+import { getLocale } from "next-intl/server";
 import { createSession, deleteSession } from "@/lib/session";
+import { redirect } from "@/i18n/navigation";
 
 export async function signin(_: FormState, formData: FormData) {
   const email = formData.get("email");
@@ -26,7 +27,8 @@ export async function signin(_: FormState, formData: FormData) {
         userName: "Brian",
         userRole: "admin",
       });
-      redirect("/blog/manage");
+      const locale = await getLocale().catch(() => "en");
+      redirect({ href: "/blog/manage", locale });
     }
   }
   return { error: "Wrong login/password" };

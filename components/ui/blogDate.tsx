@@ -1,4 +1,11 @@
-export function BlogDate({ date }: { date: Date }) {
+"use client";
+
+import { useLocale } from "next-intl";
+
+export function BlogDate({ date }: { date: Date | string }) {
+  const locale = useLocale();
+  const bcp47 = locale === "fr" ? "fr-FR" : "en-US";
+  const d = typeof date === "string" ? new Date(date) : date;
   const options: Intl.DateTimeFormatOptions = {
     year: "numeric",
     month: "long",
@@ -6,8 +13,8 @@ export function BlogDate({ date }: { date: Date }) {
     timeZone: "UTC",
   };
   return (
-    <time dateTime={date.toISOString()}>
-      {date.toLocaleDateString("en-US", options)}
+    <time dateTime={d.toISOString()}>
+      {d.toLocaleDateString(bcp47, options)}
     </time>
   );
 }

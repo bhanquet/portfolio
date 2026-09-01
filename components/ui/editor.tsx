@@ -31,6 +31,7 @@ import {
   X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 const MAX_BASE64_IMAGE_SIZE = 2 * 1024 * 1024; // 2 MB
 
@@ -47,7 +48,10 @@ export type TipTapEditorProps = {
  * bloat the stored HTML) and reports the reason through `onError`. Small
  * images are inlined at the drop position, as before.
  */
-function createImageDropGuard(onError?: (message: string) => void) {
+function createImageDropGuard(
+  onError?: (message: string) => void,
+  tUploadTooLarge?: (name: string) => string,
+) {
   return Extension.create({
     name: "imageDropGuard",
     addProseMirrorPlugins() {
@@ -67,7 +71,8 @@ function createImageDropGuard(onError?: (message: string) => void) {
 
               if (file.size > MAX_BASE64_IMAGE_SIZE) {
                 onError?.(
-                  `"${file.name}" is larger than 2 MB. Please choose a smaller image.`,
+                  tUploadTooLarge?.(file.name) ??
+                    `"${file.name}" is larger than 2 MB. Please choose a smaller image.`,
                 );
                 return true;
               }
@@ -93,7 +98,10 @@ function createImageDropGuard(onError?: (message: string) => void) {
   });
 }
 
-function createExtensions(onError?: (message: string) => void) {
+function createExtensions(
+  onError?: (message: string) => void,
+  tUploadTooLarge?: (name: string) => string,
+) {
   return [
     StarterKit.configure({
       heading: {
@@ -183,7 +191,7 @@ function createExtensions(onError?: (message: string) => void) {
       inline: false,
       allowBase64: true,
     }),
-    createImageDropGuard(onError),
+    createImageDropGuard(onError, tUploadTooLarge),
   ];
 }
 
@@ -220,13 +228,14 @@ export default function TipTapEditor({
   const [imageUrl, setImageUrl] = useState("");
   const linkInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const t = useTranslations("Admin");
 
   const editor = useEditor({
     content: editorContent,
     onUpdate: ({ editor }) => {
       if (onEditorChange) onEditorChange(editor.getHTML());
     },
-    extensions: createExtensions(onError),
+    extensions: createExtensions(onError, (name: string) => t("uploadTooLarge", { name })),
     immediatelyRender: false,
     editorProps: {
       attributes: {
@@ -655,15 +664,9 @@ export default function TipTapEditor({
 
       {editorState && (
         <div className="mt-3 flex items-center justify-end gap-1.5 text-xs text-text-muted">
-          <span>
-            {editorState.words.toLocaleString()}{" "}
-            {editorState.words === 1 ? "word" : "words"}
-          </span>
+          <span>{t("editorWords", { count: editorState.words })}</span>
           <span aria-hidden="true">·</span>
-          <span>
-            {editorState.characters.toLocaleString()}{" "}
-            {editorState.characters === 1 ? "character" : "characters"}
-          </span>
+          <span>{t("editorCharacters", { count: editorState.characters })}</span>
         </div>
       )}
 

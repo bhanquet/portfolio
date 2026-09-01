@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import { Resend } from "resend";
+import { getLocale, getTranslations } from "next-intl/server";
 
 const contactSchema = z.object({
   firstName: z.string().min(1).max(50),
@@ -14,11 +15,13 @@ export async function sendContactEmail(
   _prevState: { success?: boolean; error?: string } | null,
   formData: FormData,
 ): Promise<{ success?: boolean; error?: string }> {
+  const locale = await getLocale().catch(() => "en");
+  const t = await getTranslations({ locale, namespace: "Contact" });
   const data = Object.fromEntries(formData.entries());
   const parsed = contactSchema.safeParse(data);
 
   if (!parsed.success) {
-    return { error: "Please fill in all fields correctly." };
+    return { error: t("validationError") };
   }
 
   const { firstName, lastName, email, message } = parsed.data;
@@ -29,7 +32,7 @@ export async function sendContactEmail(
 
   if (!resendApiKey || !fromEmail || !toEmail) {
     console.error("Missing email configuration");
-    return { error: "Email service is not configured." };
+    return { error: t("serviceNotConfigured") };
   }
 
   try {
@@ -38,18 +41,18 @@ export async function sendContactEmail(
       from: fromEmail,
       to: toEmail,
       replyTo: email,
-      subject: `New contact message from ${firstName} ${lastName}`,
+      subject: t("subject", { firstName, lastName }),
       text: `From: ${firstName} ${lastName} <${email}>\n\n${message}`,
     });
 
     if (error) {
       console.error("Resend error:", error);
-      return { error: "Failed to send email. Please try again later." };
+      return { error: t("sendError") };
     }
 
     return { success: true };
   } catch (error) {
     console.error("Failed to send contact email:", error);
-    return { error: "Failed to send email. Please try again later." };
+    return { error: t("sendError") };
   }
 }
