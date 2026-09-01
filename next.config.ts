@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
 
 // Public R2 URL (e.g. https://r2.hanbr.be) used to serve uploaded images.
 const r2PublicHostname = process.env.R2_PUBLIC_URL
@@ -26,4 +27,6 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+const withNextIntl = createNextIntlPlugin();
+
+export default withNextIntl(nextConfig);
