@@ -13,11 +13,15 @@ export type SessionData = {
 export type Blog = {
   title: string;
   slug: string;
-  createdDate: Date;
-  editedDate?: Date | null;
+  locale: string;
+  translationGroupId: string;
+  createdDate: Date | string;
+  editedDate?: Date | string | null;
   tags: string[];
   imagePath?: string | null;
   summary: string;
   content: string;
   public?: boolean;
 };
+
+

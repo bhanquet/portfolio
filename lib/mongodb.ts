@@ -1,4 +1,4 @@
-import { Db, MongoClient } from "mongodb";
+import { MongoClient } from "mongodb";
 
 const uri = process.env.MONGODB_URI;
 const dbName = process.env.MONGODB_DB || "portfolio";
@@ -10,7 +10,6 @@ const mongoUri: string = uri;
 // alike) so we never leak connections by creating a new pool per request.
 const globalWithMongo = global as typeof globalThis & {
   _mongoClient?: MongoClient;
-  _mongoDidSetup?: boolean;
 };
 
 export async function getDB() {
@@ -20,18 +19,5 @@ export async function getDB() {
   const client = globalWithMongo._mongoClient;
 
   await client.connect();
-  const db = client.db(dbName);
-  if (!globalWithMongo._mongoDidSetup) {
-    await setup(db);
-    globalWithMongo._mongoDidSetup = true;
-  }
-
-  return db;
-}
-
-async function setup(db: Db) {
-  await db.collection("blogs").createIndex({ slug: 1 }, { unique: true });
-  globalWithMongo._mongoDidSetup = true;
-
-  console.log("Index created successfully");
+  return client.db(dbName);
 }
