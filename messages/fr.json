@@ -1,0 +1,118 @@
+{
+  "Header": {
+    "home": "Accueil",
+    "projects": "Projets",
+    "blog": "Blog",
+    "contact": "Contact"
+  },
+  "Hero": {
+    "titlePrefix": "Je suis",
+    "titleName": "Brian Hanquet",
+    "subtitle": "Je crée des sites web simples, rapides et élégants, faciles à utiliser.",
+    "ctaContact": "Me contacter",
+    "ctaProjects": "Voir mes projets",
+    "imageAlt": "Photo de Brian Hanquet"
+  },
+  "About": {
+    "title": "À propos",
+    "p1": "J'adore travailler sur les nouvelles technologies et apprendre sans cesse.",
+    "p2": "Je conçois des applications web rapides, ergonomiques et efficaces. Je mets l'accent sur la performance, l'automatisation et la sécurité pour garantir la fiabilité de chaque projet.",
+    "p3": "Mon expérience en systèmes et infrastructure me permet aussi d'intégrer les applications avec les services cloud, les bases de données et le réseau de façon fluide."
+  },
+  "Projects": {
+    "title": "Projets"
+  },
+  "Contact": {
+    "title": "Contact",
+    "intro": "Vous pouvez me joindre à",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "email": "Email",
+    "message": "Message",
+    "send": "Envoyer",
+    "sending": "Envoi...",
+    "subject": "Nouveau message de contact de {firstName} {lastName}",
+    "success": "Votre message a été envoyé avec succès.",
+    "errorPrefix": "",
+    "validationError": "Merci de remplir correctement tous les champs.",
+    "serviceNotConfigured": "Le service d'email n'est pas configuré.",
+    "sendError": "Échec de l'envoi. Veuillez réessayer plus tard."
+  },
+  "Blog": {
+    "title": "Blog",
+    "description": "Plongez dans l'univers tech, automobile, électronique et sim racing. Tutoriels, astuces et retours d'expérience d'un passionné.",
+    "searchPlaceholder": "Rechercher...",
+    "tagsTitle": "Tags",
+    "noContent": "Pas encore de contenu.",
+    "readMore": "Lire la suite",
+    "paginationPrev": "Précédent",
+    "paginationNext": "Suivant",
+    "notFound": "Non trouvé"
+  },
+  "BlogPost": {
+    "createdOn": "Créé le",
+    "editedOn": "modifié le"
+  },
+  "Common": {
+    "language": "Langue"
+  },
+  "Home": {
+    "title": "Brian Hanquet",
+    "description": "Portfolio de Brian Hanquet — sites web simples, rapides et élégants. Découvrez projets, blog et contact."
+  },
+  "Admin": {
+    "manageTitle": "Articles du blog",
+    "manageSubtitle": "Brouillons, édition et publication de vos articles.",
+    "manageSearchResults": "{count, plural, one {# résultat pour « {search} »} other {# résultats pour « {search} »}}",
+    "newPost": "Nouvel article",
+    "noResultsTitle": "Aucun résultat pour « {search} »",
+    "noResultsHint": "Essayez un autre terme de recherche.",
+    "clearSearch": "Effacer la recherche",
+    "noPostsTitle": "Aucun article pour l'instant",
+    "noPostsHint": "Vos brouillons et articles publiés apparaîtront ici.",
+    "public": "Publié",
+    "draft": "Brouillon",
+    "signOut": "Se déconnecter",
+    "editSharedHint": "Traduction côte-à-côte — image partagée",
+    "postSaved": "Article enregistré",
+    "postTitlePlaceholder": "Titre de l'article",
+    "editSlug": "Modifier",
+    "notSavedYet": "Pas encore enregistré",
+    "created": "Créé",
+    "edited": "Modifié",
+    "coverImageShared": "Image de couverture (partagée)",
+    "coverImage": "Image de couverture",
+    "summary": "Résumé",
+    "summaryPlaceholder": "Brève description pour l'aperçu et le SEO…",
+    "summaryHint": "Laissez vide pour générer automatiquement depuis le contenu.",
+    "tags": "Tags",
+    "toolbarSaving": "Enregistrement…",
+    "toolbarUnsaved": "Modifications non enregistrées",
+    "toolbarNewPost": "Nouvel article",
+    "toolbarSaved": "Enregistré",
+    "toolbarBack": "Retour aux articles",
+    "toolbarViewLive": "Voir en ligne",
+    "toolbarSave": "Enregistrer",
+    "toolbarDelete": "Supprimer",
+    "toolbarDeletePost": "Supprimer l'article",
+    "toolbarUnsavedConfirm": "Vous avez des modifications non enregistrées. Quitter quand même ?",
+    "deleteTitle": "Supprimer cet article ?",
+    "deleteDescription": "sera définitivement supprimé. Cette action est irréversible.",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "authLogin": "Connexion",
+    "authEmail": "Email",
+    "authPassword": "Mot de passe",
+    "authLogIn": "Se connecter",
+    "imageUploadPrompt": "Cliquez pour importer une image de couverture",
+    "imageUploadHint": "PNG ou JPG, jusqu'à 5 Mo",
+    "imageCoverAlt": "Image de couverture",
+    "imageRemove": "Retirer l'image",
+    "tagAddPlaceholder": "Ajouter un tag",
+    "tagRemoveLabel": "Retirer le tag {tag}",
+    "editorWords": "{count, plural, one {# mot} other {# mots}}",
+    "editorCharacters": "{count, plural, one {# caractère} other {# caractères}}",
+    "uploadFailed": "Échec de l'import",
+    "uploadTooLarge": "« {name} » dépasse 2 Mo. Veuillez choisir une image plus petite."
+  }
+}

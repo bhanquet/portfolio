@@ -1,0 +1,118 @@
+{
+  "Header": {
+    "home": "Home",
+    "projects": "Projects",
+    "blog": "Blog",
+    "contact": "Contact"
+  },
+  "Hero": {
+    "titlePrefix": "I'm",
+    "titleName": "Brian Hanquet",
+    "subtitle": "I create simple, fast, and beautiful websites that are easy to use.",
+    "ctaContact": "Contact me",
+    "ctaProjects": "See my work",
+    "imageAlt": "Image of Brian Hanquet"
+  },
+  "About": {
+    "title": "About",
+    "p1": "I love working on new technologies and learning new things.",
+    "p2": "I build web applications that are fast, user-friendly, and efficient. I focus on performance, automation, and security to ensure reliability in every project.",
+    "p3": "I also have a systems and infrastructure background that allow me to seamlessly integrate applications with cloud services, databases, and networking solutions."
+  },
+  "Projects": {
+    "title": "Projects"
+  },
+  "Contact": {
+    "title": "Contact",
+    "intro": "You can contact me at",
+    "firstName": "Firstname",
+    "lastName": "Lastname",
+    "email": "Email",
+    "message": "Message",
+    "send": "Send",
+    "sending": "Sending...",
+    "subject": "New contact message from {firstName} {lastName}",
+    "success": "Your message has been sent successfully.",
+    "errorPrefix": "",
+    "validationError": "Please fill in all fields correctly.",
+    "serviceNotConfigured": "Email service is not configured.",
+    "sendError": "Failed to send email. Please try again later."
+  },
+  "Blog": {
+    "title": "Blog",
+    "description": "Dive into a world of tech, cars, electronics, and sim racing. Explore tutorials, tips, and insights from a passionate hobbyist.",
+    "searchPlaceholder": "Search...",
+    "tagsTitle": "Tags",
+    "noContent": "No content yet.",
+    "readMore": "Read more",
+    "paginationPrev": "Previous",
+    "paginationNext": "Next",
+    "notFound": "Not Found"
+  },
+  "BlogPost": {
+    "createdOn": "Created on",
+    "editedOn": "edited on"
+  },
+  "Common": {
+    "language": "Language"
+  },
+  "Home": {
+    "title": "Brian Hanquet",
+    "description": "Portfolio of Brian Hanquet — simple, fast, beautiful websites. Explore projects, blog, and get in touch."
+  },
+  "Admin": {
+    "manageTitle": "Blog posts",
+    "manageSubtitle": "Draft, edit and publish your writing.",
+    "manageSearchResults": "{count, plural, one {# result for \"{search}\"} other {# results for \"{search}\"}}",
+    "newPost": "New post",
+    "noResultsTitle": "No results for \"{search}\"",
+    "noResultsHint": "Try a different search term.",
+    "clearSearch": "Clear search",
+    "noPostsTitle": "No posts yet",
+    "noPostsHint": "Your drafts and published posts will show up here.",
+    "public": "Public",
+    "draft": "Draft",
+    "signOut": "Sign out",
+    "editSharedHint": "Side-by-side translation — shared image",
+    "postSaved": "Post saved",
+    "postTitlePlaceholder": "Post title",
+    "editSlug": "Edit",
+    "notSavedYet": "Not saved yet",
+    "created": "Created",
+    "edited": "Edited",
+    "coverImageShared": "Cover image (shared)",
+    "coverImage": "Cover image",
+    "summary": "Summary",
+    "summaryPlaceholder": "Brief description for previews and SEO…",
+    "summaryHint": "Leave empty to auto-generate from the content.",
+    "tags": "Tags",
+    "toolbarSaving": "Saving…",
+    "toolbarUnsaved": "Unsaved changes",
+    "toolbarNewPost": "New post",
+    "toolbarSaved": "Saved",
+    "toolbarBack": "Back to posts",
+    "toolbarViewLive": "View live",
+    "toolbarSave": "Save",
+    "toolbarDelete": "Delete",
+    "toolbarDeletePost": "Delete post",
+    "toolbarUnsavedConfirm": "You have unsaved changes. Leave anyway?",
+    "deleteTitle": "Delete this post?",
+    "deleteDescription": "will be permanently deleted. This action cannot be undone.",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "authLogin": "Login",
+    "authEmail": "Email",
+    "authPassword": "Password",
+    "authLogIn": "Log In",
+    "imageUploadPrompt": "Click to upload a cover image",
+    "imageUploadHint": "PNG or JPG, up to 5 MB",
+    "imageCoverAlt": "Cover image",
+    "imageRemove": "Remove image",
+    "tagAddPlaceholder": "Add tag",
+    "tagRemoveLabel": "Remove tag {tag}",
+    "editorWords": "{count, plural, one {# word} other {# words}}",
+    "editorCharacters": "{count, plural, one {# character} other {# characters}}",
+    "uploadFailed": "Upload failed",
+    "uploadTooLarge": "\"{name}\" is larger than 2 MB. Please choose a smaller image."
+  }
+}
