@@ -1,6 +1,6 @@
 # Brian Hanquet — Portfolio
 
-A personal portfolio and blog built with **Next.js 16** (App Router), **React 19**, **Tailwind CSS 4**, **MongoDB**, and **TipTap**.
+A personal portfolio and blog built with **Next.js 16** (App Router), **React 19**, **Tailwind CSS 4**, **MongoDB**, **TipTap**, and **next-intl**.
 
 ## Tech stack
 
@@ -11,6 +11,8 @@ A personal portfolio and blog built with **Next.js 16** (App Router), **React 19
 - **Auth:** Custom JWT session (`jose`) + bcrypt password
 - **Editor:** TipTap (StarterKit + Image)
 - **Email:** Resend (contact form)
+- **i18n:** [next-intl](https://next-intl.dev/) with `en` and `fr`
+- **Image storage:** Cloudflare R2 (S3-compatible)
 - **Deployment:** Docker / any Node.js host
 
 ## Getting started
@@ -28,6 +30,8 @@ A personal portfolio and blog built with **Next.js 16** (App Router), **React 19
    - `ADMIN_EMAIL` and `ADMIN_PASSWORD` — hash the admin password with bcrypt
    - `RESEND_API_KEY` and `RESEND_FROM_EMAIL` for the contact form
    - `DOMAIN` for the sitemap and contact email
+   - `R2_BUCKET_NAME`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_ENDPOINT`, and `R2_PUBLIC_URL` for image uploads
+   - `NEXT_PUBLIC_SITE_URL` (production) for absolute metadata/sitemap URLs
 
 3. Install dependencies:
 
@@ -51,6 +55,15 @@ npm run build
 
 MongoDB must be reachable during the build because several pages fetch data at build time. If MongoDB is unavailable, dynamic routes and the sitemap fall back to dynamic rendering.
 
+If you are migrating from the legacy single-locale blog, run:
+
+```bash
+npm run migrate:i18n
+npm run indexes:ensure
+```
+
+Both scripts require `MONGODB_URI` and are idempotent.
+
 ## Lint & type check
 
 ```bash
@@ -61,21 +74,25 @@ npx tsc --noEmit
 ## Project structure
 
 ```text
-app/                 # Next.js App Router pages
+app/[locale]/        # Next.js App Router pages with i18n routing
 actions/             # Server Actions (auth, blog, contact, image upload)
 components/          # React components
   shared/            # Page sections (Hero, About, Contact, Projects, ...)
   ui/                # Reusable UI components
   blog/              # Blog-specific components
-lib/                 # Utilities, database, session, validations, sanitize
+i18n/                # next-intl routing and request configuration
+messages/            # Translation files (en.json, fr.json)
+lib/                 # Utilities, database, session, validations, sanitize, R2, SEO
 public/              # Static assets
-public/images/       # Uploaded blog images (created automatically)
 public/cv.pdf        # CV placeholder — replace with your own
+scripts/             # Database migration and index management scripts
 ```
 
 ## Admin area
 
-The admin sign-in URL is `/auth/signin/{SIGNIN_SECRET}`. Keep `SIGNIN_SECRET` confidential — it acts as the gatekeeper for the login page. Once logged in, you can create and edit blog posts at `/blog/manage`.
+The admin sign-in URL is `/{locale}/auth/signin/{SIGNIN_SECRET}` (e.g. `/en/auth/signin/...`). Keep `SIGNIN_SECRET` confidential — it acts as the gatekeeper for the login page.
+
+Once logged in, you can create and edit blog posts at `/{locale}/blog/manage`. The editor supports side-by-side translations: each article shares a `translationGroupId` and one cover image across locales, while the title, slug, summary, content, and tags are per-locale.
 
 ## Environment variables
 
@@ -89,8 +106,10 @@ The contact form uses Resend. Make sure `RESEND_API_KEY` and `RESEND_FROM_EMAIL`
 
 ## Security notes
 
-- Rate limiting, CSP, and security headers are applied in `middleware.ts`.
-- Uploaded images are validated (MIME type, magic bytes, size limit) and renamed with a UUID.
+- `proxy.ts` currently only handles i18n routing (`next-intl`). There is no rate limiting at the edge; add it there if needed (or at the reverse proxy) rather than ad-hoc in actions.
+- Admin routes (`/blog/manage/*`) are protected by `getSession()` checks in server actions and by the admin layout. `proxy.ts` is not a security boundary.
+- Uploaded images are validated (MIME type, magic bytes, size limit), converted to WebP, and stored on Cloudflare R2 with a UUID filename.
+- `sharp` is used server-side to optimize images before upload.
 - HTML content is sanitized server-side before being stored.
 - Search queries are escaped before being passed to MongoDB `$regex`.
 
