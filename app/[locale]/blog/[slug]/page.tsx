@@ -1,5 +1,5 @@
 import { sanitizeHtml } from "@/lib/sanitize";
-import { fetchAllBlogs, fetchBlog } from "@/lib/data";
+import { fetchAllBlogs, fetchBlog, fetchBlogGroup } from "@/lib/data";
 import { notFound } from "next/navigation";
 import { Blog as BlogType } from "@/lib/definitions";
 import Image from "next/image";
@@ -7,6 +7,9 @@ import Tags from "@/components/ui/tags";
 import { BlogDate } from "@/components/ui/blogDate";
 import type { Metadata } from "next";
 import { SITE_URL } from "@/lib/site";
+import { routing } from "@/i18n/routing";
+import { JsonLd } from "@/components/shared/jsonld";
+import { getTranslations } from "next-intl/server";
 
 export const revalidate = 300; // Revalidate this page every 5 minutes
 
@@ -14,6 +17,7 @@ export async function generateStaticParams() {
   try {
     const blogs = await fetchAllBlogs();
     return blogs.map((blog) => ({
+      locale: blog.locale,
       slug: blog.slug,
     }));
   } catch (error) {
@@ -26,12 +30,12 @@ export async function generateStaticParams() {
 }
 
 type Props = {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
-  const blog = await fetchBlog(slug);
+  const { locale, slug } = await params;
+  const blog = await fetchBlog(slug, true, locale);
 
   if (!blog) {
     return {
@@ -43,19 +47,43 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = blog.title;
   const description = blog.summary;
 
+  // Build hreflang with per-locale slugs when translations exist
+  let languages: Record<string, string> = Object.fromEntries(
+    routing.locales.map((l) => [l, `/${l}/blog/${blog.slug}`]),
+  );
+  if (blog.translationGroupId) {
+    try {
+      const group = await fetchBlogGroup(blog.translationGroupId, true);
+      if (group.length) {
+        languages = Object.fromEntries(
+          routing.locales.map((l) => {
+            const alt = group.find((b) => b.locale === l);
+            const slugForLocale = alt?.slug ?? blog.slug;
+            return [l, `/${l}/blog/${slugForLocale}`];
+          }),
+        );
+      }
+    } catch {
+      // fallback to same slug for all locales
+    }
+  }
+
   return {
     title,
     description,
     alternates: {
-      canonical: `/blog/${blog.slug}`,
+      canonical: `/${locale}/blog/${blog.slug}`,
+      languages,
     },
     openGraph: {
       type: "article",
       title,
       description,
-      url: `/blog/${blog.slug}`,
-      publishedTime: blog.createdDate.toISOString(),
-      modifiedTime: blog.editedDate?.toISOString(),
+      url: `/${locale}/blog/${blog.slug}`,
+      publishedTime: new Date(blog.createdDate).toISOString(),
+      modifiedTime: blog.editedDate
+        ? new Date(blog.editedDate).toISOString()
+        : undefined,
       authors: ["Brian Hanquet"],
       tags: blog.tags,
       images: blog.imagePath
@@ -79,25 +107,28 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function Page({ params }: Props) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
+  const t = await getTranslations({ locale, namespace: "BlogPost" });
 
   let blog: BlogType;
-  const fetchedBlog = await fetchBlog(slug);
+  const fetchedBlog = await fetchBlog(slug, true, locale);
   if (!fetchedBlog) return notFound();
   blog = fetchedBlog;
 
   blog.content = sanitizeHtml(blog.content);
 
+  const localeToBcp47: Record<string, string> = { en: "en-US", fr: "fr-FR" };
   const blogPostingJsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "@id": `${SITE_URL}/blog/${blog.slug}`,
+    "@id": `${SITE_URL}/${locale}/blog/${blog.slug}`,
     headline: blog.title,
     description: blog.summary,
     image: blog.imagePath ?? null,
-    datePublished: blog.createdDate.toISOString(),
-    dateModified:
-      blog.editedDate?.toISOString() ?? blog.createdDate.toISOString(),
+    datePublished: new Date(blog.createdDate).toISOString(),
+    dateModified: blog.editedDate
+      ? new Date(blog.editedDate).toISOString()
+      : new Date(blog.createdDate).toISOString(),
     author: {
       "@type": "Person",
       name: "Brian Hanquet",
@@ -110,21 +141,16 @@ export default async function Page({ params }: Props) {
     },
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `${SITE_URL}/blog/${blog.slug}`,
+      "@id": `${SITE_URL}/${locale}/blog/${blog.slug}`,
     },
     keywords: blog.tags.join(", "),
     articleSection: "Technology",
-    inLanguage: "en-US",
+    inLanguage: localeToBcp47[locale] ?? "en-US",
   };
 
   return (
     <div className="bg-white p-5 pb-32 rounded-md">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(blogPostingJsonLd).replace(/</g, "\\u003c"),
-        }}
-      />
+      <JsonLd data={blogPostingJsonLd} />
       <div className="max-w-3xl mx-auto mt-8">
         {/* Title */}
         <h1 key="titleDisplay" className="text-5xl font-bold">
@@ -152,10 +178,24 @@ export default async function Page({ params }: Props) {
 
         {/* Date */}
         <p className="mt-4 italic text-gray-600">
-          Created on <BlogDate date={blog.createdDate} />
+          {t("createdOn")}{" "}
+          <BlogDate
+            date={
+              blog.createdDate instanceof Date
+                ? blog.createdDate.toISOString()
+                : (blog.createdDate as string)
+            }
+          />
           {"editedDate" in blog && blog.editedDate && (
             <span>
-              , edited on <BlogDate date={blog.editedDate} />
+              , {t("editedOn")}{" "}
+              <BlogDate
+                date={
+                  blog.editedDate instanceof Date
+                    ? (blog.editedDate as Date).toISOString()
+                    : (blog.editedDate as string)
+                }
+              />
             </span>
           )}
         </p>

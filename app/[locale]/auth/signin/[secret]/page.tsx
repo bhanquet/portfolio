@@ -1,6 +1,6 @@
 import { getSession } from "@/lib/session";
 import { notFound, redirect } from "next/navigation";
-import SignInForm from "@/app/auth/signin/form";
+import SignInForm from "../form";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -16,9 +16,9 @@ export const metadata: Metadata = {
 export default async function SignInPage({
   params,
 }: {
-  params: Promise<{ secret: string }>;
+  params: Promise<{ locale: string; secret: string }>;
 }) {
-  const { secret } = await params;
+  const { secret, locale } = await params;
 
   if (secret !== process.env.SIGNIN_SECRET) {
     return notFound();
@@ -26,7 +26,7 @@ export default async function SignInPage({
 
   const session = await getSession();
   if (session) {
-    redirect("/blog/manage");
+    redirect(`/${locale}/blog/manage`);
   }
 
   return <SignInForm />;
