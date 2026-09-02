@@ -55,14 +55,14 @@ npm run build
 
 MongoDB must be reachable during the build because several pages fetch data at build time. If MongoDB is unavailable, dynamic routes and the sitemap fall back to dynamic rendering.
 
-If you are migrating from the legacy single-locale blog, run:
+Migrations in `migrations/` run automatically at build time (`npm run build` chains `tsx scripts/migrate.ts && next build`). Pending migrations are tracked in the `migrations` collection. To run or preview manually:
 
 ```bash
-npm run migrate:i18n
-npm run indexes:ensure
+npm run migrate          # apply pending migrations
+npm run migrate:dry-run  # list without applying
 ```
 
-Both scripts require `MONGODB_URI` and are idempotent.
+To skip migrations in a local build without MongoDB: `SKIP_MIGRATIONS=1 npm run build`.
 
 ## Lint & type check
 
@@ -85,7 +85,8 @@ messages/            # Translation files (en.json, fr.json)
 lib/                 # Utilities, database, session, validations, sanitize, R2, SEO
 public/              # Static assets
 public/cv.pdf        # CV placeholder — replace with your own
-scripts/             # Database migration and index management scripts
+ scripts/             # Build-time migration runner (`migrate.ts`)
+ migrations/          # Versioned DB migrations (tracked in `migrations` collection)
 ```
 
 ## Admin area

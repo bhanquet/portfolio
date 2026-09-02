@@ -4,11 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "tsx scripts/migrate.ts && next build",
     "start": "next start",
     "lint": "eslint .",
-    "migrate:i18n": "tsx scripts/migrate-blogs-i18n.ts",
-    "indexes:ensure": "tsx scripts/ensure-indexes.ts"
+    "migrate": "tsx scripts/migrate.ts",
+    "migrate:dry-run": "tsx scripts/migrate.ts --dry-run"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1114.0",

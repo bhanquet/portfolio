@@ -8,7 +8,7 @@ This file contains project-specific context for coding agents working on this Ne
 - **Server Actions**: business logic is in `actions/` (`auth.ts`, `blog.ts`, `contact.ts`, `imageUploader.ts`).
 - **Data access**: `lib/data.ts` is the only place that queries MongoDB directly.
 - **Session**: custom JWT session stored in an `httpOnly` cookie named `session` (`lib/session.ts`).
-- **Database**: MongoDB via native driver (`lib/mongodb.ts`). Indexes are managed offline via `scripts/migrate-blogs-i18n.ts` / `scripts/ensure-indexes.ts` — no index creation at runtime.
+- **Database**: MongoDB via native driver (`lib/mongodb.ts`). Migrations are versioned in `migrations/` and run automatically at build time via `scripts/migrate.ts` (tracked in `migrations` collection) — no index creation at runtime.
 - **Image storage**: Cloudflare R2 via `lib/r2.ts`. Uploaded images are converted to WebP with `sharp` and served from a dedicated public R2 hostname.
 
 ## Security rules
@@ -39,7 +39,7 @@ This file contains project-specific context for coding agents working on this Ne
 - When running under Docker Compose (`../docker-compose.yml`), `MONGODB_URI` is overridden to use the `mongo` service host instead of `localhost`.
 - Uploaded images are stored on Cloudflare R2 (`lib/r2.ts`), not in `public/images/`. The `R2_PUBLIC_URL` must be a dedicated public hostname, not the app domain or the S3 API endpoint.
 - `sharp` is required server-side for image optimization; it is declared in `package.json`.
-- If the MongoDB collection is missing `locale`/`translationGroupId` (legacy data), run `npm run migrate:i18n` before deploying.
+- Migrations run automatically on `npm run build` / Vercel deploy. For a local build without MongoDB use `SKIP_MIGRATIONS=1 npm run build`.
 - The build fetches MongoDB data at build time. If MongoDB is unavailable, dynamic routes fall back to runtime rendering.
 - `.env.local` must never be committed. `env.example` is the source of truth for required variables.
 - The up-to-date Next.js documentation for the installed version lives in `node_modules/next/dist/docs/`.
