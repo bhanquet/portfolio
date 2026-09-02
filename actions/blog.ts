@@ -43,9 +43,8 @@ export async function saveBlog(
     return { error: "Not authorized" };
   }
 
-  // `previousSlug` is kept for API compatibility but no longer used: the row
-  // is now located by translationGroupId+locale, which is stable across slug edits.
-  void previousSlug;
+  // previousSlug is kept to revalidate the old path when the slug changes.
+  // The row is located by translationGroupId+locale, which is stable across slug edits.
   // Respect a slug set in the editor; fall back to deriving it from the title.
   blog.slug = slugify(blog.slug?.trim() ? blog.slug : blog.title);
   blog.locale = (blog.locale || "en").toLowerCase();
@@ -117,6 +116,11 @@ export async function saveBlog(
     }
 
     const localePrefix = `/${(result.data as Blog).locale}`;
+    const newSlug = (result.data as Blog).slug;
+    revalidatePath(`${localePrefix}/blog/${newSlug}`);
+    if (previousSlug && previousSlug !== newSlug) {
+      revalidatePath(`${localePrefix}/blog/${previousSlug}`);
+    }
     revalidatePath(`${localePrefix}/blog`, "layout");
     revalidatePath(localePrefix);
     revalidatePath("/sitemap.xml");
@@ -140,13 +144,16 @@ export async function deleteBlog(
   if (!session || session.userRole !== "admin") {
     return { success: false, error: "Not authorized" };
   }
+  if (!locale || !slug) {
+    return { success: false, error: "Missing slug or locale" };
+  }
 
   let oldImagePath: string | null | undefined;
 
   try {
     const db = await getDB();
     const blogs = db.collection("blogs");
-    const filter: Record<string, unknown> = locale ? { slug, locale } : { slug };
+    const filter: Record<string, unknown> = { slug, locale };
     const existing = await blogs.findOne<
       { imagePath?: string | null; translationGroupId?: string }
     >(filter as never, { projection: { imagePath: 1, translationGroupId: 1 } });
@@ -171,6 +178,7 @@ export async function deleteBlog(
     }
 
     // Revalidate locale-specific paths and the global sitemap
+    revalidatePath(`/${locale}/blog/${slug}`);
     revalidatePath(`/${locale}/blog`, "layout");
     revalidatePath(`/${locale}`);
     revalidatePath("/sitemap.xml");
