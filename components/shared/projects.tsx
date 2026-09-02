@@ -8,7 +8,7 @@ export default async function Projects() {
   const t = await getTranslations({ locale, namespace: "Projects" });
   let projects: Awaited<ReturnType<typeof fetchBlogsByTag>> = [];
   try {
-    projects = await fetchBlogsByTag("project", true, locale);
+    projects = await fetchBlogsByTag(["project", "projet"], true, locale);
   } catch (error) {
     console.warn("Failed to fetch projects, rendering empty list:", error);
   }

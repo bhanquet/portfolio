@@ -143,14 +143,15 @@ export async function fetchAllTags(
 }
 
 export async function fetchBlogsByTag(
-  tag: string,
+  tag: string | string[],
   publicOnly: boolean = true,
   locale?: string,
 ): Promise<Blog[]> {
+  const tags = Array.isArray(tag) ? tag : [tag];
   const db = await getDB();
   const base: Filter<BlogDoc> = publicOnly
-    ? { public: true, tags: { $in: [tag] } }
-    : { tags: { $in: [tag] } };
+    ? { public: true, tags: { $in: tags } }
+    : { tags: { $in: tags } };
   const filter = combineFilters(base, localeFilter(locale));
   const blogsDoc = await db
     .collection<BlogDoc>("blogs")
